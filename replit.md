@@ -42,3 +42,6 @@ This starts both:
 - Vite is configured to proxy `/api` requests to the Express backend
 - Frontend is accessible on port 5000 (Replit's exposed port)
 - Backend runs internally on port 3000
+
+
+## REPLIT IS 1-CLICK!

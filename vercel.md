@@ -24,3 +24,6 @@ a) server.js
 b) vercel.json
 - need to create a new file
     (which has a lot of JSON have never seen before)
+
+
+## VERCEL IS 1-CLICK!
