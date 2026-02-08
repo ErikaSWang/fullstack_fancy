@@ -9,13 +9,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
+    allowedHosts: [process.env.REPLIT_DEV_DOMAIN, '.replit.dev', 'all'].filter(Boolean),
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true
       }
-    },
-    allowedHosts: 'all',
-    allowedHosts: ['3d004aea-abb2-427b-a163-7776ac9407e7-00-2gfl6an6ztmvd.kirk.replit.dev', '3d004aea-abb2-427b-a163-7776ac9407e7-00-2gfl6an6ztmvd.kirk.replit.dev:3000/']
+    }
   }
 })

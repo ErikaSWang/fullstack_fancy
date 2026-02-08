@@ -1,4 +1,4 @@
-# Full Stack App
+# Full Stack App (COPYING/FORKING THIS TEMPLATE)
 
 A minimal full-stack application skeleton with React + Vite (frontend) and Express (backend).
 
@@ -6,13 +6,18 @@ A minimal full-stack application skeleton with React + Vite (frontend) and Expre
 
 ```
 .
-├── client/          # React + Vite frontend
+├── .vscode/           # IDE Settings
+│   ├── launch.json/
+
+├── backend/          # Express backend
+│   ├── server.js
+│   └── package.json
+
+├── frontend/          # React + Vite frontend
 │   ├── src/
 │   ├── package.json
 │   └── vite.config.js
-├── server/          # Express backend
-│   ├── server.js
-│   └── package.json
+
 └── package.json     # Root package.json
 ```
 
@@ -22,7 +27,9 @@ A minimal full-stack application skeleton with React + Vite (frontend) and Expre
 - Node.js (v16 or higher)
 - npm
 
-### Installation
+### Installation Instructions
+
+
 
 1. **Install server dependencies**:
    ```(in the terminal line)
@@ -50,16 +57,21 @@ A minimal full-stack application skeleton with React + Vite (frontend) and Expre
 
 Start both the backend and frontend with one command:
 
+PRESS RUN
+
+
 ```(in the terminal line)
 npm run dev
 ```
 
 This will:
 - Start the Express server on `http://localhost:3000`
-- Start the Vite dev server on `http://localhost:5173`
+- Start the Vite dev server on `http://localhost:5000`
 - Automatically open your browser to the frontend
 
 **The frontend will display a message fetched from the backend API.**
+
+
 
 ## Individual Commands
 
@@ -75,9 +87,10 @@ cd server && npm start
 cd client && npm run dev
 ```
 
+
 ## How It Works
 
-1. **Frontend** (`client/`) - React app running on port 5173
+1. **Frontend** (`client/`) - React app running on port 5000
    - Makes a request to `/api/hello` on the backend
    - Displays the response message
 
@@ -86,6 +99,8 @@ cd client && npm run dev
    - Returns a JSON message
 
 3. **Proxy** - Vite is configured to proxy API requests to the backend
+
+
 
 ## Adding Features
 
