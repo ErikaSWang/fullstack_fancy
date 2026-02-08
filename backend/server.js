@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 
+
 const app = express()
 const PORT = process.env.PORT || 3000
 
@@ -12,16 +13,10 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the backend!' })
 })
 
-// Only listen when running locally, not on Vercel
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`)
-  })
-}
 
 
-// Only needed for deployment
-// (Deployments need to build a reactc package, or something like that?)
+
+// For Vercel AND Render - builds a production mode version of the app
 
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -39,7 +34,12 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-
+// Only listen when running locally, not on Vercel (don't need this for Render??)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`)
+  })
+}
 
 // Export for Vercel serverless
 export default app
