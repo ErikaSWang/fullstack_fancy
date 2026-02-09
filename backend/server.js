@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Only listen when running locally, not on Vercel (don't need this for Render??)
-if (!process.env.VERCEL) {
+if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
   })
