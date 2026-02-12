@@ -8,7 +8,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('/api/welcome')
+        const res = await fetch('/api/hello')
         const data = await res.json()
         setMessage(data.message)
         setLoading(false)

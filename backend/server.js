@@ -1,8 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import welcomeRouter from './routes/welcome.js';
-import errorRouter from './routes/error_404.js';
-
 
 
 const app = express()
@@ -12,14 +9,9 @@ app.use(cors())
 app.use(express.json())
 
 // API routes must come before static file serving
-// 'Mount' the routers
-app.use('/api', welcomeRouter);
-app.use('/api', errorRouter);
-
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the backend!' })
 })
-
 
 
 
