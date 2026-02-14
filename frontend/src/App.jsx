@@ -19,7 +19,7 @@ function App() {
         setLoading(false)
       } catch (err) {
         console.error('Error:', err)
-        setWelcome('Error fetching welcome');
+        setWelcome('Error fetching welcome (server error)');
         setLoading(false)
       }
     }
@@ -38,31 +38,12 @@ function App() {
         setLoading(false)
       } catch (err) {
         console.error('Error:', err)
-        setHello('Error fetching hello');
+        setHello('Error fetching hello (server error)');
         setLoading(false)
       }
     }
     
     fetchHello()
-
-  }, [])
-
-
-  useEffect(() => {
-    const fetchError = async () => {
-      try {
-        const res = await fetch('/api/404Error')
-        const data = await res.json()
-        setError(data.message)
-        setLoading(false)
-      } catch (err) {
-        console.error('Error:', err)
-        setError('Error fetching error message');
-        setLoading(false)
-      }
-    }
-    
-    fetchError()
 
   }, [])
 
@@ -76,7 +57,7 @@ function App() {
         setLoading(false)
       } catch (err) {
         console.error('Error:', err)
-        setErrorCheck('Error check working as expected');
+        setErrorCheck('The error check has failed (server error, not 404 bad route error)');
       }
     }
     
@@ -92,7 +73,6 @@ function App() {
       <h1>Full Stack App</h1>
       <p>{loading ? 'Loading...' : welcome}</p>
       <p>{loading ? 'Loading...' : hello}</p>
-      <p>{loading ? 'Loading...' : error}</p>
       <p>{loading ? 'Loading...' : errorCheck}</p>
     </div>
   )

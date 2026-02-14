@@ -62,6 +62,23 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
+// #1 ERROR-HANDLER - catch undefined routes
+// (passes 404 to the next error handler if no route matches the request)
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+// #2 ERROR-HANDLER - this will catch the 404 error created above and send a JSON response instead of the default HTML page
+// 'Mounting' the error router
+app.use('/api', errorRouter);
+
+// #3 Error handler (final catch-all)
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+
+  res.status(status).json({ message: message });
+});
 
 
 
