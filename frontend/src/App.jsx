@@ -5,7 +5,6 @@ function App() {
   const [message, setMessage] = useState('')
   const [hello, setHello] = useState('')
   const [welcome, setWelcome] = useState('')
-  const [error, setError] = useState('')
   const [errorCheck, setErrorCheck] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -58,6 +57,7 @@ function App() {
       } catch (err) {
         console.error('Error:', err)
         setErrorCheck('The error check has failed (server error, not 404 bad route error)');
+        setLoading(false)
       }
     }
     

@@ -47,8 +47,6 @@ app.get('/api/hello', (req, res) => {
   )
 });
 
-// 'Mounting' the error messages router
-app.use('/api', errorMessagesRouter);
 
 
 
@@ -69,8 +67,8 @@ app.use((req, res, next) => {
 });
 
 // #2 ERROR-HANDLER - this will catch the 404 error created above and send a JSON response instead of the default HTML page
-// 'Mounting' the error router
-app.use('/api', errorRouter);
+// 'Mounting' the error messages router
+app.use('/api', errorMessagesRouter);
 
 // #3 Error handler (final catch-all)
 app.use((err, req, res, next) => {
