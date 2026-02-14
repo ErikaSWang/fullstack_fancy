@@ -9,12 +9,20 @@ import errorMessagesRouter from './routes/errorMessages.js';
 const app = express()
 const PORT = process.env.PORT || 3000
 
+
+// SECURITY MIDDLEWARE COMES VERY FIRST
+import helmet from 'helmet'
+
+app.use(helmet())
+
+
+// ALLOW CROSS-ORIGIN REQUESTS (CORS)
+// PARSE JSON BODIES (json sent as strings, so the format needs to be checked?)
 app.use(cors())
 app.use(express.json())
 
 
-
-// LOGGING MIDDLEWARE 
+// LOGGING MIDDLEWARE GOES HERE
 import morgan from 'morgan'
 
 app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
@@ -42,9 +50,7 @@ app.use('/api', errorMessagesRouter);
 
 
 // HTTP HEADER SECURITY MIDDLEWARE
-//import helmet from 'helmet'
-
-app.use(helmet()) // Adds security-related HTTP headers to protect against common vulnerabilities (e.g., XSS, clickjacking, etc.)
+// (helmet is now applied early in the middleware stack above)
 
 
 
