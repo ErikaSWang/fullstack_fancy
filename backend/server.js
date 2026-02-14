@@ -42,9 +42,9 @@ app.use('/api', errorMessagesRouter);
 
 
 // HTTP HEADER SECURITY MIDDLEWARE
-import helmet from 'helmet'
+//import helmet from 'helmet'
 
-app.use(helmet()) // Adds security-related HTTP headers to protect against common vulnerabilities (e.g., XSS, clickjacking, etc.)
+//app.use(helmet()) // Adds security-related HTTP headers to protect against common vulnerabilities (e.g., XSS, clickjacking, etc.)
 
 
 
