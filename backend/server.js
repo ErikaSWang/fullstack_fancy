@@ -9,26 +9,26 @@ import errorMessagesRouter from './routes/errorMessages.js';
 const app = express()
 const PORT = process.env.PORT || 3000
 
-
-// ALLOW CROSS-ORIGIN REQUESTS (CORS)
-// PARSE JSON BODIES (json sent as strings, so the format needs to be checked?)
+// allow cross-origin requests (CORS)
+// parse json bodies (json sent as strings, so the format needs to be checked?)
 app.use(cors())
 app.use(express.json())
 
 
 
-// SECURITY MIDDLEWARE COMES VERY FIRST
+// HTTP HEADER SECURITY MIDDLEWARE COMES FIRST (before logging and routes)
+// (helps protect against common vulnerabilities like XSS, clickjacking, etc.)
 import helmet from 'helmet'
 
 app.use(helmet())
 
 
 
-// LOGGING MIDDLEWARE GOES HERE
+// LOGGING MIDDLEWARE COMES NEXT
+// Logs all incoming requests to the terminal console (nothing shows without it)
 import morgan from 'morgan'
 
-app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
-
+app.use(morgan('dev')) 
 
 
 
@@ -51,9 +51,16 @@ app.get('/api/hello', (req, res) => {
 app.use('/api', errorMessagesRouter);
 
 
-// HTTP HEADER SECURITY MIDDLEWARE
-// (helmet is now applied early in the middleware stack above)
 
+// ERROR HANDLING MIDDLEWARE COMES AFTER THE ROUTES
+// (catches errors thrown in the routes and sends a response to show the user)
+
+import errorhandler from 'errorhandler'
+import createError from 'http-errors'
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(errorhandler())
+}
 
 
 
