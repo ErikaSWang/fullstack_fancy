@@ -10,16 +10,18 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 
+// ALLOW CROSS-ORIGIN REQUESTS (CORS)
+// PARSE JSON BODIES (json sent as strings, so the format needs to be checked?)
+app.use(cors())
+app.use(express.json())
+
+
+
 // SECURITY MIDDLEWARE COMES VERY FIRST
 import helmet from 'helmet'
 
 app.use(helmet())
 
-
-// ALLOW CROSS-ORIGIN REQUESTS (CORS)
-// PARSE JSON BODIES (json sent as strings, so the format needs to be checked?)
-app.use(cors())
-app.use(express.json())
 
 
 // LOGGING MIDDLEWARE GOES HERE
