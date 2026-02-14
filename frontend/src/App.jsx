@@ -93,6 +93,7 @@ function App() {
       <p>{loading ? 'Loading...' : welcome}</p>
       <p>{loading ? 'Loading...' : hello}</p>
       <p>{loading ? 'Loading...' : error}</p>
+      <p>{loading ? 'Loading...' : errorCheck}</p>
     </div>
   )
 }
