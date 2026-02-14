@@ -17,7 +17,7 @@ app.use(express.json())
 // LOGGING MIDDLEWARE 
 import morgan from 'morgan'
 
-//app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
+app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
 
 
 
