@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-
+import loadingRouter from './routes/loading.js';
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -8,10 +8,21 @@ const PORT = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json())
 
+
+// ACTUAL ROUTES HERE
 // API routes must come before static file serving
+
+// 'Mounting' the welcome router
+app.use('/api', loadingRouter);
+
 app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from the backend!' })
-})
+  res.status(200).json(
+    { 
+      message: 'Hello from the backend!'
+    }
+  )
+});
+
 
 
 
