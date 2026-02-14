@@ -6,6 +6,7 @@ function App() {
   const [hello, setHello] = useState('')
   const [welcome, setWelcome] = useState('')
   const [error, setError] = useState('')
+  const [errorCheck, setErrorCheck] = useState('')
   const [loading, setLoading] = useState(true)
 
 
@@ -24,7 +25,9 @@ function App() {
     }
     
     fetchWelcome()
+
   }, [])
+
 
   useEffect(() => {
     const fetchHello = async () => {
@@ -41,7 +44,9 @@ function App() {
     }
     
     fetchHello()
+
   }, [])
+
 
   useEffect(() => {
     const fetchError = async () => {
@@ -58,7 +63,27 @@ function App() {
     }
     
     fetchError()
+
   }, [])
+
+
+  useEffect(() => {
+    const fetchFailCheck = async () => {
+      try {
+        const res = await fetch('/api/errorFail')
+        const data = await res.json()
+        setErrorCheck(data.message)
+        setLoading(false)
+      } catch (err) {
+        console.error('Error:', err)
+        setErrorCheck('Error check working as expected');
+      }
+    }
+    
+    fetchFailCheck()
+
+  }, [])
+
 
 
 
