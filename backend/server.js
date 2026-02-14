@@ -17,7 +17,7 @@ app.use(express.json())
 // LOGGING MIDDLEWARE 
 import morgan from 'morgan'
 
-app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
+//app.use(morgan('dev')) // Logs all incoming requests to the terminal console (nothing shows without it)
 
 
 
@@ -44,7 +44,7 @@ app.use('/api', errorMessagesRouter);
 // HTTP HEADER SECURITY MIDDLEWARE
 //import helmet from 'helmet'
 
-//app.use(helmet()) // Adds security-related HTTP headers to protect against common vulnerabilities (e.g., XSS, clickjacking, etc.)
+app.use(helmet()) // Adds security-related HTTP headers to protect against common vulnerabilities (e.g., XSS, clickjacking, etc.)
 
 
 
