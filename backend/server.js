@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import loadingRouter from './routes/loading.js';
+import errorMessagesRouter from './routes/errorMessages.js';
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -23,7 +24,8 @@ app.get('/api/hello', (req, res) => {
   )
 });
 
-
+// 'Mounting' the error messages router
+app.use('/api', errorMessagesRouter);
 
 
 // For Vercel AND Render - builds a production mode version of the app

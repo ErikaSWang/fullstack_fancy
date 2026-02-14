@@ -5,6 +5,7 @@ function App() {
   const [message, setMessage] = useState('')
   const [hello, setHello] = useState('')
   const [welcome, setWelcome] = useState('')
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
 
@@ -42,6 +43,23 @@ function App() {
     fetchHello()
   }, [])
 
+  useEffect(() => {
+    const fetchError = async () => {
+      try {
+        const res = await fetch('/api/404Error')
+        const data = await res.json()
+        setError(data.message)
+        setLoading(false)
+      } catch (err) {
+        console.error('Error:', err)
+        setError('Error fetching error message');
+        setLoading(false)
+      }
+    }
+    
+    fetchError()
+  }, [])
+
 
 
   return (
@@ -49,7 +67,7 @@ function App() {
       <h1>Full Stack App</h1>
       <p>{loading ? 'Loading...' : welcome}</p>
       <p>{loading ? 'Loading...' : hello}</p>
-      
+      <p>{loading ? 'Loading...' : error}</p>
     </div>
   )
 }
