@@ -31,6 +31,7 @@ app.use(morgan('dev'))
 
 
 // ADDITIONAL HEADER SECURITY
+// https://www.upguard.com/webscan
 app.use((req, res, next) => {
   // Custom headers
   res.set({
