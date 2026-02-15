@@ -90,9 +90,12 @@ import fs from 'fs'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Serve static files from React build if the public folder exists
+// Check if React build exists (only check once)
 const publicPath = path.join(__dirname, '../public')
-if (fs.existsSync(publicPath)) {
+const serveReactApp = fs.existsSync(publicPath)
+
+// Serve static files from React build
+if (serveReactApp) {
   app.use(express.static(publicPath))
 }
 
@@ -118,7 +121,7 @@ app.get('/api/hello', (req, res) => {
 
 // Handle React routing - serve index.html for all non-API routes
 // This must come AFTER API routes but BEFORE error handlers
-if (fs.existsSync(publicPath)) {
+if (serveReactApp) {
   app.get('*', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'))
   })
