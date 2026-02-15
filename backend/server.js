@@ -8,18 +8,19 @@ import { sendErrorMessage } from './controllers/errorControllers.js';
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// allow cross-origin requests (CORS)
-// parse json bodies (json sent as strings, so the format needs to be checked?)
-app.use(cors())
-app.use(express.json())
-
-
 
 // HTTP HEADER SECURITY MIDDLEWARE COMES FIRST (before logging and routes)
 // (helps protect against common vulnerabilities like XSS, clickjacking, etc.)
 import helmet from 'helmet'
 
 app.use(helmet())
+
+
+
+// allow cross-origin requests (CORS)
+// parse json bodies (json sent as strings, so the format needs to be checked?)
+app.use(cors())
+app.use(express.json())
 
 
 
@@ -30,16 +31,6 @@ import morgan from 'morgan'
 app.use(morgan('dev')) 
 
 
-// ADDITIONAL HEADER SECURITY
-// https://www.upguard.com/webscan
-app.use((req, res, next) => {
-  // Custom headers
-  res.set({
-    'X-Frame-Options': 'DENY',
-    'X-Content-Type-Options': 'nosniff',
-  });
-  next();
-});
 
 
 
