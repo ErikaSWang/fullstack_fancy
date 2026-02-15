@@ -1,8 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import welcomeRouter from './routes/welcome.js';
-import errorMessagesRouter from './routes/errorMessages.js';
-
+import { sendErrorMessage } from './controllers/errorControllers.js';
 
 
 // SETTING UP THE SERVER
@@ -67,13 +66,13 @@ app.use((req, res, next) => {
 });
 
 // #2 ERROR-HANDLER - this will catch the 404 error created above and send a JSON response instead of the default HTML page
-// 'Mounting' the error messages router
-app.use('/api', errorMessagesRouter);
+// Just an import of code, because routers only work with specific routes
+app.use(sendErrorMessage);
 
 // #3 Error handler (final catch-all)
 app.use((err, req, res, next) => {
   const status = err.status || 500;
-  const message = err.message || 'Internal Server Error';
+  const message = err.message || '500: Internal Server Error';
 
   res.status(status).json({ message: message });
 });
