@@ -22,13 +22,16 @@ app.use(helmet({
       "default-src": ["'self'"],
       "base-uri": ["'self'"],
       "font-src": ["'self'", "https:", "data:"],
+      "frame-src": ["'none'"],
       "frame-ancestors": ["'none'"], // Stronger version of X-Frame-Options
       "img-src": ["'self'", "data:"],
       "object-src": ["'none'"],
       "script-src": ["'self'"],
       "script-src-attr": ["'none'"],
-      "style-src": ["'self'", "https:", "'unsafe-inline'"],
-      "upgrade-insecure-requests": [],
+      "style-src": ["'self'", "https:"],
+      "connect-src": ["'self'"],
+      "media-src": ["'self'"],
+      "form-action": ["'self'"]
     },
   },
   // This solves "X-Frame-Options"
@@ -61,11 +64,12 @@ app.use(morgan('dev'))
 app.use((req, res, next) => {
   // Custom headers
   res.set({
-
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'no-referrer',
+    'Permissions-Policy': 'geolocation=(), microphone=()'
   });
   next();
 });
-
 
 
 
