@@ -3,3 +3,7 @@ For the start command:
 
 
 ## RENDER NEED TO ADD THE ABOVE TO THE 'START' COMMAND, THEN 1-CLICK!
+
+
+Alternative start command:
+    node backend/server.js
