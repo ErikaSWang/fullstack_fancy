@@ -43,10 +43,9 @@ app.use(helmet({
 }));
 
 
-// ADDITIONAL CUSTOM HEADER SECURITY comes next
+// ADDITIONAL CUSTOM HEADER SECURITY come next
 // https://www.upguard.com/webscan
 app.use((req, res, next) => {
-  // Custom headers
   res.set({
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'no-referrer',
@@ -56,6 +55,7 @@ app.use((req, res, next) => {
 });
 
 
+// REQUEST HANDLING
 // allow cross-origin requests (CORS)
 // parse json bodies (json sent as strings, so the format needs to be checked?)
 app.use(cors())
@@ -71,17 +71,21 @@ app.use(morgan('dev'))
 
 
 
+// RESPONSE HANDLING
+import compression from 'compression';
+
+app.use(compression());
 
 
 
 
 
 // ACTUAL ROUTES HERE
-// API routes must come before static file serving
 
-// 'Mounting' the welcome router
+// 'Mounting' the welcome router (additional routes defined in the separate folder)
 app.use('/api', welcomeRouter);
 
+// Route defined right here
 app.get('/api/hello', (req, res) => {
   res.status(200).json(
     { 
@@ -93,9 +97,7 @@ app.get('/api/hello', (req, res) => {
 
 
 
-// ERROR HANDLING MIDDLEWARE COMES AFTER THE ROUTES
-// (catches errors thrown in the routes and sends a response to show the user)
-
+// ERROR HANDLING MIDDLEWARE goes after the routes, for fails
 import errorhandler from 'errorhandler'
 import createError from 'http-errors'
 
@@ -113,7 +115,7 @@ app.use((req, res, next) => {
 // Just an import of code, because routers only work with specific routes
 app.use(sendErrorMessage);
 
-// #3 Error handler (final catch-all)
+// #3 ERROR-HANDLER - final catch-all
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   const message = err.message || '500: Internal Server Error';
@@ -145,12 +147,14 @@ if (fs.existsSync(publicPath)) {
   })
 }
 
-// Only listen when running locally, not on Vercel (don't need this for Render??)
-if (!process.env.VERCEL) {
+
+
+// OPEN PORT FOR LOCAL DEPLOYMENT
+if (!process.env.VERCEL || !process.env.RENDER) {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
   })
 }
 
-// Export for Vercel serverless
+// EXPORT FOR VERCEL AND RENDER
 export default app
