@@ -13,8 +13,31 @@ const PORT = process.env.PORT || 3000
 // (helps protect against common vulnerabilities like XSS, clickjacking, etc.)
 import helmet from 'helmet'
 
-app.use(helmet())
+// app.use(helmet())
 
+app.use(helmet({
+  // This solves "CSP not implemented"
+  contentSecurityPolicy: {
+    directives: {
+      "default-src": ["'self'"],
+      "base-uri": ["'self'"],
+      "font-src": ["'self'", "https:", "data:"],
+      "frame-ancestors": ["'none'"], // Stronger version of X-Frame-Options
+      "img-src": ["'self'", "data:"],
+      "object-src": ["'none'"],
+      "script-src": ["'self'"],
+      "script-src-attr": ["'none'"],
+      "style-src": ["'self'", "https:", "'unsafe-inline'"],
+      "upgrade-insecure-requests": [],
+    },
+  },
+  // This solves "X-Frame-Options"
+  frameguard: {
+    action: "deny",
+  },
+  // This solves "X-Content-Type-Options"
+  noSniff: true,
+}));
 
 
 // allow cross-origin requests (CORS)
@@ -33,6 +56,15 @@ app.use(morgan('dev'))
 
 
 
+// ADDITIONAL HEADER SECURITY
+// https://www.upguard.com/webscan
+app.use((req, res, next) => {
+  // Custom headers
+  res.set({
+
+  });
+  next();
+});
 
 
 
