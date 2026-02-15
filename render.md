@@ -7,6 +7,6 @@ For the start command:
 
 EDIT: now ...
 
-    Build Command: npm run build
+    Build Command: npm install && npm run build
     Start Command: node backend/server.js
     Environment Variable: NODE_ENV=production
