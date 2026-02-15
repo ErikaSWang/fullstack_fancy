@@ -30,6 +30,19 @@ import morgan from 'morgan'
 app.use(morgan('dev')) 
 
 
+// ADDITIONAL HEADER SECURITY
+app.use((req, res, next) => {
+  // Custom headers
+  res.set({
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff',
+  });
+  next();
+});
+
+
+
+
 
 
 // ACTUAL ROUTES HERE
