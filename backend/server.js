@@ -129,17 +129,19 @@ app.use((err, req, res, next) => {
 
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Serve static files from React build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../public')))
+// Serve static files from React build if the public folder exists
+const publicPath = path.join(__dirname, '../public')
+if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath))
 
   // Handle React routing - serve index.html for all non-API routes
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'))
+    res.sendFile(path.join(publicPath, 'index.html'))
   })
 }
 
