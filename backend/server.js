@@ -122,7 +122,11 @@ app.get('/api/hello', (req, res) => {
 // Handle React routing - serve index.html for all non-API routes
 // This must come AFTER API routes but BEFORE error handlers
 if (serveReactApp) {
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
+    // Skip API routes - let them fall through to error handlers
+    if (req.path.startsWith('/api')) {
+      return next()
+    }
     res.sendFile(path.join(publicPath, 'index.html'))
   })
 }
