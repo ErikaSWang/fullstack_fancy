@@ -80,6 +80,25 @@ app.use(compression());
 
 
 
+// PRODUCTION BUILD - SERVE REACT APP
+// For Vercel and Render - builds a production mode version of the app
+
+import path from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Serve static files from React build if the public folder exists
+const publicPath = path.join(__dirname, '../public')
+if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath))
+}
+
+
+
+
 // ACTUAL ROUTES HERE
 
 // 'Mounting' the welcome router (additional routes defined in the separate folder)
@@ -88,7 +107,7 @@ app.use('/api', welcomeRouter);
 // Route defined right here
 app.get('/api/hello', (req, res) => {
   res.status(200).json(
-    { 
+    {
       message: 'Hello from the backend!'
     }
   )
@@ -97,7 +116,18 @@ app.get('/api/hello', (req, res) => {
 
 
 
-// ERROR HANDLING MIDDLEWARE goes after the routes, for fails
+// Handle React routing - serve index.html for all non-API routes
+// This must come AFTER API routes but BEFORE error handlers
+if (fs.existsSync(publicPath)) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'))
+  })
+}
+
+
+
+
+// ERROR HANDLING MIDDLEWARE goes after everything else
 import errorhandler from 'errorhandler'
 import createError from 'http-errors'
 
@@ -125,32 +155,8 @@ app.use((err, req, res, next) => {
 
 
 
-
-// PRODUCTION BUILD - SERVE REACT APP
-// For Vercel and Render - builds a production mode version of the app
-
-import path from 'path'
-import { fileURLToPath } from 'url'
-import fs from 'fs'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-// Serve static files from React build if the public folder exists
-const publicPath = path.join(__dirname, '../public')
-if (fs.existsSync(publicPath)) {
-  app.use(express.static(publicPath))
-
-  // Handle React routing - serve index.html for all non-API routes
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(publicPath, 'index.html'))
-  })
-}
-
-
-
 // OPEN PORT FOR LOCAL DEPLOYMENT
-if (!process.env.VERCEL || !process.env.RENDER) {
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
   })
