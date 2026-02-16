@@ -78,8 +78,6 @@ app.use(compression());
 
 
 
-
-
 // PRODUCTION BUILD - SERVE REACT APP
 // For Vercel and Render - builds a production mode version of the app
 
