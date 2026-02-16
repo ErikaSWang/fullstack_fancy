@@ -51,7 +51,11 @@ function App() {
     const fetchFailCheck = async () => {
       try {
         const res = await fetch('/api/errorFail')
-        const data = await res.json()
+        console.log('Response status:', res.status)
+        console.log('Response headers:', res.headers.get('content-type'))
+        const text = await res.text()
+        console.log('Response body:', text)
+        const data = JSON.parse(text)
         setErrorCheck(data.message)
         setLoading(false)
       } catch (err) {
@@ -60,7 +64,7 @@ function App() {
         setLoading(false)
       }
     }
-    
+
     fetchFailCheck()
 
   }, [])
