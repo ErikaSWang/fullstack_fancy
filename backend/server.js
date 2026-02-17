@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import welcomeRouter from './routes/welcome.js';
+import usersRouter from './routes/users.js';
 import { sendErrorMessage } from './controllers/errorControllers.js';
 
 
@@ -104,6 +105,7 @@ if (serveReactApp) {
 
 // 'Mounting' the welcome router (additional routes defined in the separate folder)
 app.use('/api', welcomeRouter);
+app.use('/api/users', usersRouter);
 
 // Route defined right here
 app.get('/api/hello', (req, res) => {

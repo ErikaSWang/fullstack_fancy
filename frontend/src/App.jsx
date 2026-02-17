@@ -8,6 +8,11 @@ function App() {
   const [errorCheck, setErrorCheck] = useState('')
   const [loading, setLoading] = useState(true)
 
+  // Form state
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [formMessage, setFormMessage] = useState('')
+
 
   useEffect(() => {
     const fetchWelcome = async () => {
@@ -68,12 +73,45 @@ function App() {
 
 
 
+  // Send username/password to either /signup or /login
+  const handleSubmit = async (endpoint) => {
+    try {
+      const res = await fetch(`/api/users/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      const data = await res.json()
+      setFormMessage(data.message)
+    } catch (err) {
+      setFormMessage('Server error')
+    }
+  }
+
   return (
     <div className="container">
       <h1>Full Stack App</h1>
       <p>{loading ? 'Loading...' : welcome}</p>
       <p>{loading ? 'Loading...' : hello}</p>
       <p>{loading ? 'Loading...' : errorCheck}</p>
+
+      <hr />
+      <h2>Signup / Login</h2>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={() => handleSubmit('signup')}>Sign Up</button>
+      <button onClick={() => handleSubmit('login')}>Log In</button>
+      {formMessage && <p>{formMessage}</p>}
     </div>
   )
 }
