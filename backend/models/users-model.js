@@ -1,6 +1,7 @@
 import sql from './db.js'
 
 // Create the table when the server starts (does nothing if it already exists)
+/* Commenting this out after the first run, after we confirm it has been created)
 await sql`
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -8,6 +9,7 @@ await sql`
     password VARCHAR(255) NOT NULL
   )
 `
+*/
 
 export async function createUser(username, password) {
   const result = await sql`
@@ -15,7 +17,7 @@ export async function createUser(username, password) {
     VALUES (${username}, ${password})
     RETURNING id, username
   `
-  return result[0]
+  return result
 }
 
 export async function findUser(username) {
@@ -24,5 +26,5 @@ export async function findUser(username) {
     FROM users
     WHERE username = ${username}
   `
-  return result[0]
+  return result[0] 
 }

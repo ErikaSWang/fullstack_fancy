@@ -1,8 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import welcomeRouter from './routes/welcome.js';
-import usersRouter from './routes/users.js';
-import { sendErrorMessage } from './controllers/errorControllers.js';
+import welcomeRouter from './routes/welcome-router.js';
+import usersRouter from './routes/users-router.js';
+import { sendErrorMessage } from './controllers/error-controllers.js';
 
 
 // SETTING UP THE SERVER

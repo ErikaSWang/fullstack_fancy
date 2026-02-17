@@ -1,5 +1,14 @@
-import { createUser, findUser } from '../models/usersModel.js'
+import { createUser, findUser } from '../models/users-model.js'
 
+
+// CONTROLLER FUNCTIONS
+
+
+// CREATE NEW ACCOUNT (signup)
+// 3 steps:
+    // 1. Validate the request body (check for missing fields)
+    // 2. Check if the username is already taken
+    // 3. IF OK, create the new user and send a success message
 export async function signup(req, res) {
   const { username, password } = req.body
 
@@ -17,6 +26,12 @@ export async function signup(req, res) {
   res.status(201).json({ message: `User "${user.username}" created!`, user })
 }
 
+
+// LOG INTO EXISTING ACCOUNT (login)
+// 3 steps:
+    // 1. Validate the request body (check for missing fields)
+    // 2. Check if the username exists and the password matches
+    // 3. IF OK, send a welcome message (in a real app, you would also create a session or send a token here)
 export async function login(req, res) {
   const { username, password } = req.body
 
