@@ -6,16 +6,18 @@ await sql`
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
   )
 `
 */
 
+
 // SQL INSERT NEW USER TO SUPABASE
-export async function createUser(username, password) {
+export async function createUser(username, password, hashed_password) {
   const result = await sql`
-    INSERT INTO users (username, password)
-    VALUES (${username}, ${password})
+    INSERT INTO users (username, hashed_password, password)
+    VALUES (${username}, ${hashed_password}, ${password})
     RETURNING id, username
   `
   return result[0]
@@ -38,7 +40,7 @@ export async function createUser(username, password) {
 // (seems to need the index)
 export async function findUser(username) {
   const result = await sql`
-    SELECT id, username, password
+    SELECT id, username, hashed_password
     FROM users
     WHERE username = ${username}
   `

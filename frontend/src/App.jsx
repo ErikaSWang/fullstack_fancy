@@ -16,6 +16,7 @@ function App() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [formMessage, setFormMessage] = useState('')
+  const [token, setToken] = useState(localStorage.getItem('token'))
 
 
   useEffect(() => {
@@ -87,9 +88,22 @@ function App() {
       })
       const data = await res.json()
       setFormMessage(data.message)
+      // On login, the server returns a token — save it for future requests
+      if (endpoint === 'login' && data.token) {
+        localStorage.setItem('token', data.token)
+        setToken(data.token)
+      }
     } catch (err) {
       setFormMessage('Server error')
     }
+  }
+
+  const testProtectedRoute = async () => {
+    const res = await fetch('/api/users/profile', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    const data = await res.json()
+    setFormMessage(data.message)
   }
 
   return (
@@ -104,7 +118,7 @@ function App() {
       
       <h2>Signup / Login</h2>
 
-      <Card className="w-25 mt-2 p-4 bg-secondary text-white">
+      <Card className="w-25 mt-2 p-4 bg-secondary text-white shadow-lg">
         <Form>
           <Form.Group className="mb-3" controlId="formBasicUsername">
             <Form.Label>Username</Form.Label>
@@ -125,14 +139,22 @@ function App() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group>
-          <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
-            Sign Up
-          </Button>
-          <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
-            Log In
-          </Button>
+          <div className="d-flex justify-content-end">
+            <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
+              Sign Up
+            </Button>
+            <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
+              Log In
+            </Button>
+          </div>
         </Form>
       </Card>
+
+      {token && (
+        <Button variant="warning" className="mt-3" onClick={testProtectedRoute}>
+          Test Protected Route
+        </Button>
+      )}
 
       {formMessage && <p>{formMessage}</p>}
 
