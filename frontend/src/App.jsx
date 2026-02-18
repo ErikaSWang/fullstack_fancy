@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react'
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import './App.css'
 
 function App() {
@@ -72,7 +76,7 @@ function App() {
 
 
 
-
+  // SUBMIT INPUT TO THE BACKEND
   // Send username/password to either /signup or /login
   const handleSubmit = async (endpoint) => {
     try {
@@ -96,22 +100,42 @@ function App() {
       <p>{loading ? 'Loading...' : errorCheck}</p>
 
       <hr />
+
+      
       <h2>Signup / Login</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={() => handleSubmit('signup')}>Sign Up</button>
-      <button onClick={() => handleSubmit('login')}>Log In</button>
+
+      <Card className="w-25 mt-2 p-4 bg-secondary text-white">
+        <Form>
+          <Form.Group className="mb-3" controlId="formBasicUsername">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
+          <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
+            Sign Up
+          </Button>
+          <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
+            Log In
+          </Button>
+        </Form>
+      </Card>
+
       {formMessage && <p>{formMessage}</p>}
+
     </div>
   )
 }

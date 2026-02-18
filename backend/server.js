@@ -15,7 +15,6 @@ const PORT = process.env.PORT || 3000
 import helmet from 'helmet'
 
 // app.use(helmet())
-
 app.use(helmet({
   // This solves "CSP not implemented"
   contentSecurityPolicy: {
@@ -54,6 +53,7 @@ app.use((req, res, next) => {
   });
   next();
 });
+
 
 
 // REQUEST HANDLING
@@ -103,11 +103,18 @@ if (serveReactApp) {
 
 // ACTUAL ROUTES HERE
 
-// 'Mounting' the welcome router (additional routes defined in the separate folder)
+// 'Mounting' the routes
+// (routes all kept in the routes folder, to keep things neat)
+// (imported above, and then used here to connect them to the server)
+
+// Gets forwarded to the welcome-router ->
 app.use('/api', welcomeRouter);
+
+// Gets forwarded to the users-router ->
 app.use('/api/users', usersRouter);
 
-// Route defined right here
+
+// How to define a route right here
 app.get('/api/hello', (req, res) => {
   res.status(200).json(
     {
@@ -116,11 +123,29 @@ app.get('/api/hello', (req, res) => {
   )
 });
 
+// NB. ADDING A USER FROM SCRATCH AVOIDS THE CHAINING OF DATA THROUGH THE ->
+//    -> Router 
+//    -> Controller
+//    -> Model
+//    -> Database
+// BUT ADDS A LOT OF REDUNDANCY AND BULK
+// (SORTING/CHAINING CODE BY FUNCTION, THE BEST OF THE WORST OPTIONS)
+// app.post('/api/users/signup', (req, res) => {
+//   const { username, password } = req.body
+
+//   (would need to add all the checks in here)
+
+//   sql`INSERT INTO users (username, password)
+//       VALUES (${username}, ${password})
+//   `
+//   res.status(201).json({ message: `User "${username}" created!` })
+// })
 
 
 
-// Handle React routing - serve index.html for all non-API routes
-// This must come AFTER API routes but BEFORE error handlers
+
+// FAIL-SAFE IF APIs FAIL?
+// (Also needed for Vercel & Render?)
 if (serveReactApp) {
   app.get('*', (req, res, next) => {
     // Skip API routes - let them fall through to error handlers
@@ -142,23 +167,24 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
-// #1 ERROR-HANDLER - catch undefined routes
+// #1 Error-Handler: catch undefined routes
 // (passes 404 to the next error handler if no route matches the request)
 app.use((req, res, next) => {
   next(createError(404));
 });
 
-// #2 ERROR-HANDLER - this will catch the 404 error created above and send a JSON response instead of the default HTML page
+// #2 Error-Handler: this will catch the 404 error created above and send a JSON response instead of the default HTML page
 // Just an import of code, because routers only work with specific routes
 app.use(sendErrorMessage);
 
-// #3 ERROR-HANDLER - final catch-all
+// #3 Error-Handler: final catch-all
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   const message = err.message || '500: Internal Server Error';
 
   res.status(status).json({ message: message });
 });
+
 
 
 

@@ -11,20 +11,36 @@ await sql`
 `
 */
 
+// SQL INSERT NEW USER TO SUPABASE
 export async function createUser(username, password) {
   const result = await sql`
     INSERT INTO users (username, password)
     VALUES (${username}, ${password})
     RETURNING id, username
   `
-  return result
+  return result[0]
 }
 
+/* Alternative syntax, as shown in the docs here: https://github.com/porsager/postgres
+export async function createUser(username, password) {
+  const result = await sql`
+    INSERT INTO users ${
+      sql({ username, password }, ['username', 'password'])
+    }
+    RETURNING id, username
+  `
+  return result[0]
+}
+  */
+
+
+// SQL SEARCH FOR EXISTING USER IN SUPABASE
+// (seems to need the index)
 export async function findUser(username) {
   const result = await sql`
     SELECT id, username, password
     FROM users
     WHERE username = ${username}
   `
-  return result[0] 
+  return result[0]
 }
