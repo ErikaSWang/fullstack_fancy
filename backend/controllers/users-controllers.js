@@ -1,12 +1,18 @@
 import { createUser, findUser } from '../models/users-model.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import redis from '../models/redis-cache.js'
 
 
 // LOGIN FUNCTIONS
 // 1. HASHING PASSWORDS WITH BCRYPT
 // 2. GENERATING JWT TOKENS WITH JSONWEBTOKEN
 // 3. INTERACTING WITH SUPABASE DATABASE (using postgreSQL, via postgres.js)
+
+
+// LOGOUT FUNCTIONS
+// 1. DELETE JWT TOKENS ON LOGOUT, USING REDIS CACHE
+
 
 
 // SHARED MINI-FUNCTIONS (used by both signup and login)
@@ -109,7 +115,7 @@ export async function login(req, res) {
   // jwt.sign() STORES USER DATA, TO AVOID MULTIPLE DATABASE CALLS (like an open tab)
   // (best to keep the duration short, and refresh it?)
 
-  // CAREFUL! DATA IS VISIBLE TO THE PUBLIC
+  // CAREFUL! DATA IS VISIBLE TO THE PUBLIC (https://jwt.io)
   // NEVER PASS SENSITIVE DATA BACK TO THE FRONTEND!!!
 
 
@@ -125,4 +131,34 @@ export async function login(req, res) {
   )
 
   res.status(200).json({ message: `Welcome back, ${user.username}!`, token })
+}
+
+
+
+
+// LOG OUT (logout)
+
+// REMEMBER, BACKEND IS STATELESS, AND SERVES SEVERAL USERS SIMULTANEOUSLY
+// (that's why the token stays with the user, like a Movenpick Marche receipt, to prove they logged in)
+
+// Tokens can be destroyed - they can only be 'blacklisted' (made invalid)
+// (That's why they have a short expiry time)
+
+// JWT.decode() only stores in the 'blacklist' while valid
+// (then deletes to clear up cache after it's expired (listed in the token))
+
+export async function logout(req, res) {
+
+  // Here we pass the token back from the frontend
+  const token = req.headers['authorization']?.split(' ')[1]
+  if (!token) return res.status(400).json({ message: 'No token provided' })
+
+  // Decode the token to get the expiry time
+  const decoded = jwt.decode(token)
+  const secondsUntilExpiry = decoded.exp - Math.floor(Date.now() / 1000)
+
+  // Add the token to the Redis blacklist with an expiry time (for automatic cleanup)
+  await redis.set(`blacklist:${token}`, '1', { ex: secondsUntilExpiry })
+
+  res.status(200).json({ message: 'Logged out successfully' })
 }

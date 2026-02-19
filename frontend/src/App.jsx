@@ -16,7 +16,9 @@ function App() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [formMessage, setFormMessage] = useState('')
+  // USING LOCAL STORAGE TO PERSIST THE TOKEN (so it doesn't get lost on page refresh)
   const [token, setToken] = useState(localStorage.getItem('token'))
+  const [content, setContent] = useState('')
 
 
   useEffect(() => {
@@ -77,8 +79,8 @@ function App() {
 
 
 
-  // SUBMIT INPUT TO THE BACKEND
-  // Send username/password to either /signup or /login
+  // SUBMIT USERNAME & PASSWORD TO THE BACKEND
+  // (Same function handles both signup & login)
   const handleSubmit = async (endpoint) => {
     try {
       const res = await fetch(`/api/users/${endpoint}`, {
@@ -88,7 +90,10 @@ function App() {
       })
       const data = await res.json()
       setFormMessage(data.message)
-      // On login, the server returns a token — save it for future requests
+
+      // JWT IS SENT BACK if it's a login
+      // (useState for current use)
+      // (localStorage immediately
       if (endpoint === 'login' && data.token) {
         localStorage.setItem('token', data.token)
         setToken(data.token)
@@ -106,6 +111,32 @@ function App() {
     setFormMessage(data.message)
   }
 
+  const handleLogout = async () => {
+    await fetch('/api/users/logout', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    localStorage.removeItem('token')
+    setToken(null)
+    setFormMessage('Logged out!')
+  }
+
+   // SAVE USER CONTENT TO THE BACKEND
+  const handleData = async () => {
+    try {
+      const res = await fetch(`/api/data`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ content })
+      })
+      const data = await res.json()
+      setFormMessage(data.message)
+
+    } catch (err) {
+      setFormMessage('Please try again')
+    }
+  }
+
   return (
     <div className="container">
       <h1>Full Stack App</h1>
@@ -119,41 +150,78 @@ function App() {
       <h2>Signup / Login</h2>
 
       <Card className="w-25 mt-2 p-4 bg-secondary text-white shadow-lg">
-        <Form>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </Form.Group>
+        { !token && (
+          <>
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicUsername">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
-          <div className="d-flex justify-content-end">
-            <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
-              Sign Up
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Form.Group>
+              <div className="d-flex justify-content-end">
+                <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
+                  Sign Up
+                </Button>
+                <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
+                  Log In
+                </Button>
+              </div>
+            </Form>
+          </>
+        )}
+
+        {token && (
+          <>
+            <>
+              <Form>
+                <Form.Group className="mb-3" controlId="formContent">
+                  <Form.Label>Content</Form.Label>
+                  <Form.Control
+                    type="text"
+                    as="textarea"
+                    rows={3}
+                    placeholder="Enter your thoughts here ..."
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
+                </Form.Group>
+                <div className="d-flex justify-content-end">
+                  <Button variant="info" type="button" onClick={handleData}>
+                    Submit
+                  </Button>
+                </div>
+              </Form>
+            </>
+            
+          </>
+          
+        )}
+
+      </Card>
+      
+      {token && (
+          <div className="w-25 mt-2 p-4 d-flex justify-content-around">
+            <Button variant="warning" onClick={testProtectedRoute}>
+              Test Protected Route
             </Button>
-            <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
-              Log In
+            <Button variant="danger" onClick={handleLogout}>
+              Log Out
             </Button>
           </div>
-        </Form>
-      </Card>
-
-      {token && (
-        <Button variant="warning" className="mt-3" onClick={testProtectedRoute}>
-          Test Protected Route
-        </Button>
       )}
 
       {formMessage && <p>{formMessage}</p>}

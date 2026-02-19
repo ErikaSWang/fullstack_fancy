@@ -65,7 +65,7 @@ B. Part Two
 
 
 C. Part Three
-## Database & User Input
+## Supabase Database & User Input
 - see fullstack-supabase
   - db.js
   - models/users-models.js
@@ -87,5 +87,13 @@ C. Part Three
 - see fullstack-supabase
   - controllers/users-controllers.js
   - .env
+  - app.js
       users-controllers.js
         - jsonwebtoken
+      app.js
+        - local storage
+
+## Redis Cache
+- see fullstack-supabase
+  - .env
+  -

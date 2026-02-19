@@ -1,5 +1,5 @@
 import express from 'express'
-import { signup, login } from '../controllers/users-controllers.js'
+import { signup, login, logout } from '../controllers/users-controllers.js'
 import { requireAuth } from '../controllers/auth-middleware.js'
 
 const router = express.Router()
@@ -15,6 +15,12 @@ router.post('/signup', signup)
 // POST /api/users/login
 // (gets forwarded next to the users-controller ->)
 router.post('/login', login)
+
+
+// TO LOG OUT
+// POST /api/users/logout
+router.post('/logout', requireAuth, logout)
+
 
 
 // PROTECTED ROUTE - only works if a valid JWT token is sent in the request header
