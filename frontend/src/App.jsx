@@ -1,27 +1,28 @@
-import { useState, useEffect } from 'react'
-import Container from 'react-bootstrap/Container';
+import { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import './App.css'
 
 function App() {
-  const [message, setMessage] = useState('')
   const [hello, setHello] = useState('')
   const [welcome, setWelcome] = useState('')
   const [errorCheck, setErrorCheck] = useState('')
-  const [loading, setLoading] = useState(true)
-
+  const [helloLoading, setHelloLoading] = useState(true)
+  const [welcomeLoading, setWelcomeLoading] = useState(true)
+  const [failcheckLoading, setFailcheckLoading] = useState(true)
+  
   // Form state
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [formMessage, setFormMessage] = useState('')
-  // USING LOCAL STORAGE TO PERSIST THE TOKEN (so it doesn't get lost on page refresh)
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  const [tokenExpiry, setTokenExpiry] = useState(null)
   const [content, setContent] = useState('')
   const [pastContent, setPastContent] = useState([])
 
+  // USING LOCAL STORAGE TO PERSIST THE TOKEN (so it doesn't get lost on page refresh)
+  const [token, setToken] = useState(localStorage.getItem('token'))
+
+  
 
   useEffect(() => {
     const fetchWelcome = async () => {
@@ -29,16 +30,13 @@ function App() {
         const res = await fetch('/api/welcome')
         const data = await res.json()
         setWelcome(data.message)
-        setLoading(false)
+        setWelcomeLoading(false)
       } catch (err) {
-        console.error('Error:', err)
         setWelcome('Error fetching welcome (server error)');
-        setLoading(false)
+        setWelcomeLoading(false)
       }
     }
-    
     fetchWelcome()
-
   }, [])
 
 
@@ -48,16 +46,13 @@ function App() {
         const res = await fetch('/api/hello')
         const data = await res.json()
         setHello(data.message)
-        setLoading(false)
+        setHelloLoading(false)
       } catch (err) {
-        console.error('Error:', err)
         setHello('Error fetching hello (server error)');
-        setLoading(false)
+        setHelloLoading(false)
       }
     }
-    
     fetchHello()
-
   }, [])
 
 
@@ -67,22 +62,20 @@ function App() {
         const res = await fetch('/api/errorFail')
         const data = await res.json()
         setErrorCheck(data.message)
-        setLoading(false)
+        setFailcheckLoading(false)
       } catch (err) {
-        console.error('Error:', err)
         setErrorCheck('The error check has failed (server error, not 404 bad route error)');
-        setLoading(false)
+        setFailcheckLoading(false)
       }
     }
-
     fetchFailCheck()
-
   }, [])
 
 
 
   // SUBMIT USERNAME & PASSWORD TO THE BACKEND
   // (Same function handles both signup & login)
+
   const handleSubmit = async (endpoint) => {
     try {
       const res = await fetch(`/api/users/${endpoint}`, {

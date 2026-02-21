@@ -150,4 +150,13 @@ C. Part Three
             - where the user.id (extracted in jwt-auth-check.js)
 
 
+# Security, Part 2
+
+## Rate Limiters
+
+
+
+# Frontend
+
+## Custom Hooks
 

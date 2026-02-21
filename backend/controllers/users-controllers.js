@@ -108,8 +108,14 @@ export async function login(req, res) {
   //   (THERE IS NO 'UNHASHING' tool - but anyone with the hashed passwords would have the tool to be able to unhash them I guess)
 
 
-  const passwordMatch = user && await bcrypt.compare(password, user.hashed_password)
-  if (!user || !passwordMatch) {
+  if (!user) {
+    console.log(`[AUDIT] Failed login - unknown user: "${username}" from IP ${req.ip}`)
+    return res.status(401).json({ message: 'Invalid username or password' })
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.hashed_password)
+  if (!passwordMatch) {
+    console.log(`[AUDIT] Failed login - wrong password for user: "${username}" from IP ${req.ip}`)
     return res.status(401).json({ message: 'Invalid username or password' })
   }
 

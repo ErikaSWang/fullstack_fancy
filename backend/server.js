@@ -80,6 +80,7 @@ app.use(compression());
 
 
 
+
 // PRODUCTION BUILD - SERVE REACT APP
 // For Vercel and Render - builds a production mode version of the app
 
@@ -112,7 +113,7 @@ if (serveReactApp) {
 app.use('/api', welcomeRouter);
 
 // Gets forwarded to the users-router ->
-app.use('/api/users', usersRouter);
+app.use('/api', usersRouter);
 
 // Gets forwarded to the data-router ->
 app.use('/api', contentRouter);
