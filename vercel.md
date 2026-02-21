@@ -26,4 +26,7 @@ b) vercel.json
     (which has a lot of JSON have never seen before)
 
 
+
 ## VERCEL IS 1-CLICK!
+
+## With Supabase & Redis - MUST ATTACH .env FILE!!

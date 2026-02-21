@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import welcomeRouter from './routes/welcome-router.js';
 import usersRouter from './routes/users-router.js';
-import dataRouter from './routes/data-router.js';
+import contentRouter from './routes/content-router.js';
 import { sendErrorMessage } from './controllers/error-controllers.js';
 
 
@@ -115,7 +115,7 @@ app.use('/api', welcomeRouter);
 app.use('/api/users', usersRouter);
 
 // Gets forwarded to the data-router ->
-app.use('/api', dataRouter);
+app.use('/api', contentRouter);
 
 
 // How to define a route right here

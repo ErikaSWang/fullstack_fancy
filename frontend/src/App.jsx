@@ -18,7 +18,9 @@ function App() {
   const [formMessage, setFormMessage] = useState('')
   // USING LOCAL STORAGE TO PERSIST THE TOKEN (so it doesn't get lost on page refresh)
   const [token, setToken] = useState(localStorage.getItem('token'))
+  const [tokenExpiry, setTokenExpiry] = useState(null)
   const [content, setContent] = useState('')
+  const [pastContent, setPastContent] = useState([])
 
 
   useEffect(() => {
@@ -97,6 +99,7 @@ function App() {
       if (endpoint === 'login' && data.token) {
         localStorage.setItem('token', data.token)
         setToken(data.token)
+        //setTokenExpiry(data.tokenExpiry)
       }
     } catch (err) {
       setFormMessage('Server error')
@@ -121,12 +124,22 @@ function App() {
     setFormMessage('Logged out!')
   }
 
+
+
    // SAVE USER CONTENT TO THE BACKEND
-  const handleData = async () => {
+   // NB. THIS ROUTE IS ONLY AVAILABLE IF YOU HAVE A VALID TOKEN
+   // SO THE TOKEN IS INCLUDED IN THE HEADERS
+   // (it's like the user's driver's license)
+   // Body - don't forget JSON needs to be sent as a string, and put back together on the other end
+
+  const saveContent = async () => {
     try {
-      const res = await fetch(`/api/data`, {
+      const res = await fetch(`/api/saveContent`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ content })
       })
       const data = await res.json()
@@ -137,6 +150,28 @@ function App() {
     }
   }
 
+
+  const getContent = async () => {
+    try {
+      const res = await fetch(`/api/getSavedContent`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await res.json()
+      setFormMessage(data.message)
+      setPastContent(data.content)
+
+    } catch (err) {
+      setFormMessage('Please try again')
+    }
+  }
+
+
+
+  
   return (
     <div className="container">
       <h1>Full Stack App</h1>
@@ -200,7 +235,7 @@ function App() {
                   />
                 </Form.Group>
                 <div className="d-flex justify-content-end">
-                  <Button variant="info" type="button" onClick={handleData}>
+                  <Button variant="info" type="button" onClick={saveContent}>
                     Submit
                   </Button>
                 </div>
@@ -214,9 +249,12 @@ function App() {
       </Card>
       
       {token && (
-          <div className="w-25 mt-2 p-4 d-flex justify-content-around">
+          <div className="w-25 mt-2 d-flex justify-content-around">
             <Button variant="warning" onClick={testProtectedRoute}>
               Test Protected Route
+            </Button>
+            <Button variant="primary" onClick={getContent}>
+              Load My Content
             </Button>
             <Button variant="danger" onClick={handleLogout}>
               Log Out
@@ -225,7 +263,13 @@ function App() {
       )}
 
       {formMessage && <p>{formMessage}</p>}
-
+      <hr />
+      {pastContent.map((item) => ( 
+        <Card key={item.id} className="w-25 m-2 bg-light shadow-sm">
+          <Card.Body>{item.content}</Card.Body>
+        </Card>
+      ))}
+      
     </div>
   )
 }

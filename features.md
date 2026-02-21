@@ -97,3 +97,8 @@ C. Part Three
 - see fullstack-supabase
   - .env
   -
+
+## 'Protected' features/routes - available for logged in users only
+- see fullstack-supabase
+  - server.js
+  -
