@@ -95,10 +95,59 @@ C. Part Three
 
 ## Redis Cache
 - see fullstack-supabase
+  - redis-cache.js
   - .env
-  -
 
 ## 'Protected' features/routes - available for logged in users only
 - see fullstack-supabase
+  (this one is quite involved, but same as above)
   - server.js
-  -
+  - routes/content-router.js
+  - controllers/content-controllers.js
+  - models/content-models.js
+  - jwt-authorization-check.js
+  - app.js
+      Store new comment:
+        app.js
+          - headers incl. jwt
+          - body for comment
+        server.js
+          - import router, add route
+        content-router.js
+          - POST, with route ...
+          - plus CHAIN OF FUNCTIONS ->
+        -> jwt-auth-check.js
+          - check the jwt (from the header, in jwt-auth-check.js)
+            (AND get the user-id - REMEMBER THIS IS STATELESS)
+        -> content-controllers.js
+          - sends the user_id, and comment from the body to Supabase ->
+        content-models.js
+          - CAREFUL - ask for the right database
+              - and ask for all the comments
+              - and use the right user_id (not the id)
+
+
+      Retrieve old comments:
+        app.js
+          - header again needs jwt
+          - RESPONSE WILL HAVE 2 KEY:VALUE PAIRS!
+            (one for the regular message, one for the database return (comments))
+          - need comments.map((items) => ( ... ))
+        content-router.js
+          - GET, with route ...
+          - plus CHAIN OF FUNCTIONS ->
+        -> jwt-auth-check.js
+          - check the jwt (from the header, in jwt-auth-check.js)
+            (AND get the user-id - REMEMBER THIS IS STATELESS)
+        -> content-controllers.js
+          - sends the user_id to Supabase ->
+          -> GETS BACK ALL THE USER'S PAST COMMENTS FROM THE DATABASE
+          - attach a message
+            (TWO KEY:VALUE PAIRS)
+        content-models.js
+          - CAREFUL - ask for the right database
+            - and ask for all the comments
+            - where the user.id (extracted in jwt-auth-check.js)
+
+
+
