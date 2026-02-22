@@ -4,6 +4,11 @@ import jwt from 'jsonwebtoken'
 import redis from '../models/redis-cache.js'
 
 
+// SIGNUP
+// LOGIN
+// LOGOUT
+
+
 // LOGIN FUNCTIONS
 // 1. HASHING PASSWORDS WITH BCRYPT
 // 2. INTERACTING WITH SUPABASE DATABASE

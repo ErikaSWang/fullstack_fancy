@@ -1,5 +1,8 @@
 import { addContent, getContent } from '../models/content-model.js';
 
+// ADDING CONTENT
+// RETRIEVING CONTENT
+
 
 // INPUT COMES FROM TWO DIFFERENT PLACES:
 //   - HEADER: HAS JWT, WHICH NEEDS PROCESSING TO EXTRACT THE USER_ID

@@ -153,10 +153,14 @@ C. Part Three
 # Security, Part 2
 
 ## Rate Limiters
+  - users-model.js
+  - rate-limiters.js
+      rate-limiters.js
+        - express-rate-limit
+        - express-slow-down
 
-
+## Logging
+  - 
 
 # Frontend
-
-## Custom Hooks
 

@@ -168,9 +168,9 @@ function App() {
   return (
     <div className="container">
       <h1>Full Stack App</h1>
-      <p>{loading ? 'Loading...' : welcome}</p>
-      <p>{loading ? 'Loading...' : hello}</p>
-      <p>{loading ? 'Loading...' : errorCheck}</p>
+      <p>{welcomeLoading ? 'Loading...' : welcome}</p>
+      <p>{helloLoading ? 'Loading...' : hello}</p>
+      <p>{failcheckLoading ? 'Loading...' : errorCheck}</p>
 
       <hr />
 

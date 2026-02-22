@@ -2,26 +2,35 @@ import express from 'express'
 import { signup, login, logout } from '../controllers/users-controllers.js'
 import { requireAuth } from '../controllers/jwt-authorization-check.js'
 import { loginLimiter, signupLimiter, loginSlowDown } from '../controllers/rate-limiters.js'
+import { validateSignup, validateLogin, handleValidationErrors } from '../controllers/input-validators.js'
 
 
 const router = express.Router()
 
 
+// GET/POST ARE SET HERE, ALONG WITH THE ROUTE ->
+// -> FOLLOWED BY A CHAIN OF FUNCTIONS THAT COMPLETE THE TASK
+
 
 // TO CREATE A NEW ACCOUNT
-// POST /api/users/signup
-// (gets forwarded next to the users-controller ->)
-router.post('/users/signup', signupLimiter, signup)
+// POST /api/users/signup ->
+// -> function signupLimiter is in rate-limiters.js ->
+// -> function signup is in users-controllers.js
+router.post('/users/signup', signupLimiter, validateSignup, handleValidationErrors, signup)
 
 
 // TO LOG INTO AN EXISTING ACCOUNT
-// POST /api/users/login
-// (gets forwarded next to the users-controller ->)
-router.post('/users/login', loginSlowDown, loginLimiter, login)
+// POST /api/users/login ->
+// -> function loginSlowDown is in rate-limiters.js ->
+// -> function loginLimiter is in rate-limiters.js ->
+// -> function login is in users-controllers.js
+router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, handleValidationErrors, login)
 
 
 // TO LOG OUT
-// POST /api/users/logout
+// POST /api/users/logout ->
+// -> function requireAuth is in jwt-authorization-check.js ->
+// -> function logout is in users-controllers.js
 router.post('/users/logout', requireAuth, logout)
 
 
