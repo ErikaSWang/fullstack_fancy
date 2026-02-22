@@ -9,7 +9,7 @@ import slowDown from 'express-slow-down'
 
 export const loginSlowDown = slowDown({
   windowMs: 15 * 60 * 1000,  // same window as loginLimiter
-  delayAfter: 5,              // start slowing down after 5 attempts
+  delayAfter: 3,              // start slowing down after 5 attempts
   delayMs: (hits) => hits * 500  // each attempt adds 500ms more delay
 })
 
@@ -24,7 +24,7 @@ export const loginSlowDown = slowDown({
 
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 10,
+  limit: 5,
   message: { message: 'Too many login attempts — please try again in 15 minutes' }
 })
 
