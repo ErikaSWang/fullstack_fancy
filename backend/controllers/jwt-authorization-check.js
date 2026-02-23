@@ -18,15 +18,11 @@ import redis from '../models/redis-cache.js'
 
 export async function requireAuth(req, res, next) {
 
-  // 1. Gets the token from the header (key is authorization)
-  const authHeader = req.headers['authorization']
+  // 1. Gets the token from the httpOnly cookie
+  //    (browser sends it automatically — JS can't read or steal it)
+  const token = req.cookies.token
 
-  // What is this? Is it just cleaning up the string that got sent from the frontend??
-  // YES - Token has 'Bearer ' added before the actual token
-  const token = authHeader && authHeader.split(' ')[1]  // expects: "Bearer <token>"
-
-  // 1.b) ERROR CHECK
-  //      (shouldn't happen, since the user can't access this route without one)
+  // 1.b) ERROR CHECK — no cookie means not logged in
   if (!token) return res.status(401).json({ message: 'No token provided' })
 
   // 2. IF TOKEN, HAS IT BEEN ADDED TO 'LOGGED OUT' BUCKET?

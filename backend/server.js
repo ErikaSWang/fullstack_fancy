@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import welcomeRouter from './routes/welcome-router.js';
 import usersRouter from './routes/users-router.js';
 import contentRouter from './routes/content-router.js';
@@ -59,9 +60,12 @@ app.use((req, res, next) => {
 
 // REQUEST HANDLING
 // allow cross-origin requests (CORS)
+// credentials: true — required for cookies to be sent cross-origin
 // parse json bodies (json sent as strings, so the format needs to be checked?)
-app.use(cors())
+// cookieParser — reads cookies from incoming requests (like express.json() reads the body)
+app.use(cors({ origin: 'http://localhost:5000', credentials: true }))
 app.use(express.json())
+app.use(cookieParser())
 
 
 
@@ -121,11 +125,8 @@ app.use('/api', contentRouter);
 
 // How to define a route right here
 app.get('/api/hello', (req, res) => {
-  res.status(200).json(
-    {
-      message: 'Hello from the backend!'
-    }
-  )
+  res.set('Cache-Control', 'public, max-age=60')
+  res.status(200).json({ message: 'Hello from the backend!' })
 });
 
 // NB. ADDING A USER FROM SCRATCH AVOIDS THE CHAINING OF DATA THROUGH THE ->

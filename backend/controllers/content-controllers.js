@@ -9,6 +9,7 @@ import { addContent, getContent } from '../models/content-model.js';
 //   - BODY:   HAS THE USER'S INPUT
 
 export async function gatherInput(req, res) {
+  res.set('Cache-Control', 'private, no-store')
 
   const user_id = req.user.id
   const { content } = req.body
@@ -24,6 +25,7 @@ export async function gatherInput(req, res) {
 // PREPARE THE INPUT FOR THE MODEL
 
 export async function gatherOutput(req, res) {
+  res.set('Cache-Control', 'private, no-store')
 
   const user_id = req.user.id
 

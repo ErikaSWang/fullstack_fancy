@@ -42,4 +42,13 @@ router.get('/users/profile', requireAuth, (req, res) => {
 })
 
 
+// "AM I STILL LOGGED IN?" CHECK
+// Called on page load — JS can't read httpOnly cookies, so this is the only way to know
+// 200 + username means yes, 401 means no (requireAuth handles the 401)
+router.get('/users/me', requireAuth, (req, res) => {
+  res.set('Cache-Control', 'no-store')
+  res.status(200).json({ username: req.user.username })
+})
+
+
 export default router

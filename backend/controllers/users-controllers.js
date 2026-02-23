@@ -48,6 +48,7 @@ const checkMissingFields = (username, password, res) => {
     // (Supabase adds a new row to the database, and we return a success message to the frontend)
 
 export async function signup(req, res) {
+  res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
   // #1 Check for missing fields (validation)
@@ -88,6 +89,7 @@ export async function signup(req, res) {
     // 3.b) IF OK, send a welcome message 
 
 export async function login(req, res) {
+  res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
   // #1 Check for missing fields (validation)
@@ -146,7 +148,17 @@ export async function login(req, res) {
     }
   )
 
-  res.status(200).json({ message: `Welcome back, ${user.username}!`, token })
+  // Set token as an httpOnly cookie (JS can't read it — XSS-safe)
+  // sameSite: 'lax' — sent on normal navigations, blocked on cross-site POST
+  // secure: true in production so it only travels over HTTPS
+  res.cookie('token', token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 1000   // 1 hour, matches JWT expiry
+  })
+
+  res.status(200).json({ message: `Welcome back, ${user.username}!`, username: user.username })
 }
 
 
@@ -164,10 +176,10 @@ export async function login(req, res) {
 // (then deletes to clear up cache after it's expired (listed in the token))
 
 export async function logout(req, res) {
+  res.set('Cache-Control', 'no-store')
 
-  // Here we pass the token back from the frontend
-  const token = req.headers['authorization']?.split(' ')[1]
-  if (!token) return res.status(400).json({ message: 'No token provided' })
+  // requireAuth already verified the cookie, so req.cookies.token is guaranteed valid
+  const token = req.cookies.token
 
   // Decode the token to get the expiry time
   const decoded = jwt.decode(token)
@@ -175,6 +187,9 @@ export async function logout(req, res) {
 
   // Add the token to the Redis blacklist with an expiry time (for automatic cleanup)
   await redis.set(`blacklist:${token}`, '1', { ex: secondsUntilExpiry })
+
+  // Clear the cookie from the browser
+  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
 
   res.status(200).json({ message: 'Logged out successfully' })
 }
