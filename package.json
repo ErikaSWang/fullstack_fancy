@@ -1,6 +1,6 @@
 {
   "name": "fullstack-app",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "A minimal full-stack app with React + Vite frontend and Express backend",
   "private": true,
   "scripts": {

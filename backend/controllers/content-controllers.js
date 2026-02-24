@@ -8,8 +8,12 @@ import { addContent, getContent } from '../models/content-model.js';
 //   - HEADER: HAS JWT, WHICH NEEDS PROCESSING TO EXTRACT THE USER_ID
 //   - BODY:   HAS THE USER'S INPUT
 
+// ADVANCED - NEW
+// (added cache details to header
+//   - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
+
 export async function gatherInput(req, res) {
-  res.set('Cache-Control', 'private, no-store')
+  res.set('Cache-Control', 'no-store')
 
   const user_id = req.user.id
   const { content } = req.body
@@ -24,8 +28,12 @@ export async function gatherInput(req, res) {
 
 // PREPARE THE INPUT FOR THE MODEL
 
+// ADVANCED - NEW
+// (added cache details to header
+//   - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
+
 export async function gatherOutput(req, res) {
-  res.set('Cache-Control', 'private, no-store')
+  res.set('Cache-Control', 'no-store')
 
   const user_id = req.user.id
 

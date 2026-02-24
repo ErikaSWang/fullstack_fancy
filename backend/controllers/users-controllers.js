@@ -47,6 +47,10 @@ const checkMissingFields = (username, password, res) => {
     //      b) THEN SEND THE USERNAME & PASSWORD TO SUPABASE
     // (Supabase adds a new row to the database, and we return a success message to the frontend)
 
+// ADVANCED - NEW
+// (added cache details to header
+//    - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
+
 export async function signup(req, res) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
@@ -88,9 +92,14 @@ export async function signup(req, res) {
     // 3.a) IF NOT OK, send an error message
     // 3.b) IF OK, send a welcome message 
 
+
+// ADVANCED - NEW
+  // (added logging for failed attempts)
+
 export async function login(req, res) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
+
 
   // #1 Check for missing fields (validation)
   // (helper mini-function defined above)
@@ -115,16 +124,24 @@ export async function login(req, res) {
   //   (THERE IS NO 'UNHASHING' tool - but anyone with the hashed passwords would have the tool to be able to unhash them I guess)
 
 
+  // ADVANCED - NEW
+  // (added logging for failed attempts)
+
   if (!user) {
     console.log(`[AUDIT] Failed login - unknown user: "${username}" from IP ${req.ip}`)
     return res.status(401).json({ message: 'Invalid username or password' })
   }
+
+
+  // ADVANCED - NEW
+  // (added logging for failed attempts)
 
   const passwordMatch = await bcrypt.compare(password, user.hashed_password)
   if (!passwordMatch) {
     console.log(`[AUDIT] Failed login - wrong password for user: "${username}" from IP ${req.ip}`)
     return res.status(401).json({ message: 'Invalid username or password' })
   }
+
 
   // #3.b) If ok, we sign the person in, and ADD AN AUTHORIZATION TOKEN
 
@@ -174,6 +191,10 @@ export async function login(req, res) {
 
 // JWT.decode() only stores in the 'blacklist' while valid
 // (then deletes to clear up cache after it's expired (listed in the token))
+
+
+// ADVANCED - NEW
+// (added logging for failed attempts)
 
 export async function logout(req, res) {
   res.set('Cache-Control', 'no-store')

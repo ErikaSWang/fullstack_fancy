@@ -1,6 +1,6 @@
 import express from 'express'
 import { gatherInput, gatherOutput } from '../controllers/content-controllers.js'
-import { requireAuth } from '../controllers/jwt-authorization-check.js'
+import { requireAuth } from '../controllers/jwt-auth.js'
 
 const router = express.Router()
 

@@ -63,6 +63,7 @@ app.use((req, res, next) => {
 // credentials: true — required for cookies to be sent cross-origin
 // parse json bodies (json sent as strings, so the format needs to be checked?)
 // cookieParser — reads cookies from incoming requests (like express.json() reads the body)
+// ADVANCED - NEW
 app.use(cors({ origin: 'http://localhost:5000', credentials: true }))
 app.use(express.json())
 app.use(cookieParser())
@@ -124,6 +125,10 @@ app.use('/api', contentRouter);
 
 
 // How to define a route right here
+// ADVANCED - NEW
+// (added cache details to header - ask to store, to avoid repeat calls
+//    - public info
+//    - expiration a balance between avoiding repeats vs wasting cache space)
 app.get('/api/hello', (req, res) => {
   res.set('Cache-Control', 'public, max-age=60')
   res.status(200).json({ message: 'Hello from the backend!' })
