@@ -25,26 +25,14 @@ import redis from '../models/redis-cache.js'
 
 
 
-// SHARED MINI-FUNCTIONS (used by both signup and login)
-// (true if something is missing)
-const checkMissingFields = (username, password, res) => {
-  if (!username || !password) {
-    res.status(400).json({ message: 'Username and password are required' })
-    return true
-  }
-  return false
-}
-
-
-
 
 // CREATE NEW ACCOUNT (signup)
 // 3 steps:
-    // 1. Validate the request body (check for missing fields)
-    // 2. Check if the username is already taken
-    // 3. IF OK ...
-    //      a) WE HASH THE PASSWORD
-    //      b) THEN SEND THE USERNAME & PASSWORD TO SUPABASE
+    // (check for missing fields now handled by input-validators.js)
+    // 1. Check if the username is already taken
+    // 2.a) IF OK ...
+    //       WE HASH THE PASSWORD
+    //       b) THEN SEND THE USERNAME & PASSWORD TO SUPABASE
     // (Supabase adds a new row to the database, and we return a success message to the frontend)
 
 // ADVANCED - NEW
@@ -55,11 +43,6 @@ export async function signup(req, res) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
-  // #1 Check for missing fields (validation)
-  // (helper mini-function defined above)
-  // if missing fields, it will end the signup right here
-
-  if (checkMissingFields(username, password, res)) return
 
 
   // #2 Check if username is already taken ->
@@ -87,24 +70,19 @@ export async function signup(req, res) {
 
 // LOG INTO EXISTING ACCOUNT (login)
 // 3 steps:
-    // 1. Validate the request body (check for missing fields)
-    // 2. Check if the username exists and the password matches
-    // 3.a) IF NOT OK, send an error message
-    // 3.b) IF OK, send a welcome message 
+    // (check for missing fields now handled by input-validators.js)
+    // 1. Check if the username exists and the password matches
+    // 2.a) IF NOT OK, send an error message
+    //   b) IF OK ... next()
+    // (pass along the chain to create a JWT token, cookie store, welcome message)
 
 
 // ADVANCED - NEW
   // (added logging for failed attempts)
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
-
-
-  // #1 Check for missing fields (validation)
-  // (helper mini-function defined above)
-
-  if (checkMissingFields(username, password, res)) return
 
 
   // #2 Check if username exists ->
@@ -137,45 +115,16 @@ export async function login(req, res) {
   // (added logging for failed attempts)
 
   const passwordMatch = await bcrypt.compare(password, user.hashed_password)
+
   if (!passwordMatch) {
     console.log(`[AUDIT] Failed login - wrong password for user: "${username}" from IP ${req.ip}`)
     return res.status(401).json({ message: 'Invalid username or password' })
   }
 
-
-  // #3.b) If ok, we sign the person in, and ADD AN AUTHORIZATION TOKEN
-
-  // HERE IS WHERE WE ADD JSONWEBTOKEN 
-
-  // jwt.sign() STORES USER DATA, TO AVOID MULTIPLE DATABASE CALLS (like an open tab)
-  // (best to keep the duration short, and refresh it?)
-
-  // CAREFUL! DATA IS VISIBLE TO THE PUBLIC (https://jwt.io)
-  // NEVER PASS SENSITIVE DATA BACK TO THE FRONTEND!!!
-
-
-  const token = jwt.sign(
-    {
-      id: user.id,
-      username: user.username
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '1h' 
-    }
-  )
-
-  // Set token as an httpOnly cookie (JS can't read it — XSS-safe)
-  // sameSite: 'lax' — sent on normal navigations, blocked on cross-site POST
-  // secure: true in production so it only travels over HTTPS
-  res.cookie('token', token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 1000   // 1 hour, matches JWT expiry
-  })
-
-  res.status(200).json({ message: `Welcome back, ${user.username}!`, username: user.username })
+  // THIS IS HOW WE PASS VARIABLES TO THE NEXT FUNCTION
+  // (user = the output from the database (id, username))
+  req.user = user
+  next()
 }
 
 

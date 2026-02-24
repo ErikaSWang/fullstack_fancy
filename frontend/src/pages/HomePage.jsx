@@ -21,7 +21,7 @@ function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch('/api/users/me', { credentials: 'include' })
+        const res = await fetch('/api/auth', { credentials: 'include' })
         if (res.ok) {
           const data = await res.json()
           setUser(data.username)

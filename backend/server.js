@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import welcomeRouter from './routes/welcome-router.js';
 import usersRouter from './routes/users-router.js';
 import contentRouter from './routes/content-router.js';
+import authRouter from './routes/auth-router.js';
 import { sendErrorMessage } from './controllers/error-controllers.js';
 
 
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 // ADVANCED - NEW
 app.use(cors({ origin: 'http://localhost:5000', credentials: true }))
 app.use(express.json())
+// UNSCRAMBLES THE COOKIE, SO IT CAN BE READ/USED?
 app.use(cookieParser())
 
 
@@ -122,6 +124,9 @@ app.use('/api', usersRouter);
 
 // Gets forwarded to the data-router ->
 app.use('/api', contentRouter);
+
+// Gets forwarded to the auth-router ->
+app.use('/api', authRouter);
 
 
 // How to define a route right here

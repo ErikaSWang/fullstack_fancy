@@ -3,6 +3,8 @@ import { signup, login, logout } from '../controllers/users-controllers.js'
 import { requireAuth } from '../controllers/jwt-auth.js'
 import { loginLimiter, signupLimiter, loginSlowDown } from '../controllers/rate-limiters.js'
 import { validateSignup, validateLogin, validationLogging } from '../controllers/input-validators.js'
+import { createToken } from '../controllers/jwt-auth.js'
+
 
 
 const router = express.Router()
@@ -40,7 +42,7 @@ router.post('/users/signup', signupLimiter, validateSignup, validationLogging, s
 // ADVANCED - NEW
 // -> function validateLogin is in input-validators.js ->
 // -> function login is in users-controllers.js
-router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, validationLogging, login)
+router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, validationLogging, login, createToken)
 
 
 // TO LOG OUT
@@ -57,18 +59,6 @@ router.get('/users/profile', requireAuth, (req, res) => {
   res.status(200).json({ message: `Hello ${req.user.username}, your token is valid!` })
 })
 
-
-// ADVANCED - NEW
-// (added cache details to header
-//   - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
-
-// "AM I STILL LOGGED IN?" CHECK
-// Called on page load — JS can't read httpOnly cookies, so this is the only way to know
-// 200 + username means yes, 401 means no (requireAuth handles the 401)
-router.get('/users/me', requireAuth, (req, res) => {
-  res.set('Cache-Control', 'no-store')
-  res.status(200).json({ username: req.user.username })
-})
 
 
 export default router

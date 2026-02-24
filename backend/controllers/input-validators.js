@@ -22,6 +22,7 @@ import { body, validationResult } from 'express-validator'
 // Offensive word check? body('comment').muteOffensiveWords(),
 
 // (CHAIN of checks, no comma at the end of each line)
+// no .escape() on passwords — bcrypt handles the security, and escaping mutates the value
 
 export const validateSignup = [
   body('username')
@@ -33,7 +34,7 @@ export const validateSignup = [
 
   body('password')
     .isLength({ min: 8, max: 24 }).withMessage('Password must be at least 8 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9])/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')  
 ]
 
 
@@ -50,8 +51,18 @@ export const validateLogin = [
   body('password')
     .trim()
     .notEmpty().withMessage('Password is required')
-    .escape()
     .isLength({ max: 24 }).withMessage('Invalid password'),
+]
+
+
+// CONTENT / COMMENTS RULES
+// (no .escape() — React escapes on render, so escaping here would double-encode stored text)
+
+export const validateInput = [
+  body('content')
+    .trim()
+    .notEmpty().withMessage('Content cannot be empty')
+    .isLength({ max: 1000 }).withMessage('Content cannot exceed 1000 characters')
 ]
 
 
@@ -60,9 +71,9 @@ export const validateLogin = [
 
 export function validationLogging(req, res, next) {
   const errors = validationResult(req)
-  console.log(errors.array())  // should log results to the terminal console?
-  
+
   if (!errors.isEmpty()) {
+    console.log('[VALIDATION] Failed:', errors.array())
     return res.status(400).json({ message: errors.array()[0].msg })
   }
   next()
