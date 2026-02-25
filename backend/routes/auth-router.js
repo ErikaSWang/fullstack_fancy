@@ -1,5 +1,5 @@
 import express from 'express';
-import { requireAuth } from '../controllers/jwt-auth.js'
+import { checkAuth } from '../controllers/jwt-auth.js'
 
 
 const router = express.Router();
@@ -11,7 +11,7 @@ const router = express.Router();
 // "AM I STILL LOGGED IN?" CHECK
 // Called on page load — JS can't read httpOnly cookies, so this is the only way to know
 // 200 + username means yes, 401 means no (requireAuth handles the 401)
-router.get('/auth', requireAuth, (req, res) => {
+router.get('/auth', checkAuth, (req, res) => {
   res.set('Cache-Control', 'no-store')
   res.status(200).json({ username: req.user.username })
 })

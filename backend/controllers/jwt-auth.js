@@ -3,9 +3,11 @@ import redis from '../models/redis-cache.js'
 
 
 // CREATE JWT (and COOKIE STORE)
-// CHECK JWT (if 'LOGGED OUT' and 'blacklisted')
-// USE JWT TO CHECK IF USER IS LOGGED IN
-// - CHECK RETURNS USER PROFILE 
+// CHECK JWT
+//    - VALID? (not expired)
+//    - VALID? (user logged out, and token was 'blacklisted' since it hasn't expired yet)
+//    (- returns id, username if still valid)
+// BLACKLIST JWT ('to 'LOG OUT')
 
 
 
@@ -20,7 +22,7 @@ import redis from '../models/redis-cache.js'
 // (we are now adding cookies, because otherwise a JWT in localstorage would be visible to the public)
 // (big security leak!)
 
-export async function createToken(req, res) {
+export function freshToken(req, res) {
 
   // THESE ARE THE VARIABLES WE PASSED FROM THE LAST FUNCTION
   const { id, username } = req.user
@@ -44,25 +46,22 @@ export async function createToken(req, res) {
     maxAge: 60 * 60 * 1000   // 1 hour, matches JWT expiry
   })
 
-  res.status(200).json({ message: `Welcome back, ${username}!`, username })
-
 }
 
 
 
-// REDIS HAS THE 'LOGGED OUT' TOKENS BUCKET OF BLACKLISTED (not yet expired)
-// JWT 
+// CHECK JWT
 
 // Three steps to check if JWT Token is valid:
 //   1. Is there a token?
-//   2. Has the user logged out (and token placed in expired bucket)?
+//   2. Has the user logged out (and token placed in expired bucket (in REDIS))?
 //   3. Verify the token (?? What does this involve?)
 
 
 // ADVANCED - NEW 
 // JWT IS NOW STORED IN A COOKIE (prev localstorage, in the browser))
 
-export async function requireAuth(req, res, next) {
+export async function checkAuth(req, res, next) {
 
 
   // 1. Gets the token from the httpOnly cookie
@@ -85,10 +84,38 @@ export async function requireAuth(req, res, next) {
   // 3. JWT VERIFIES THAT YOU GAVE THE AUTHORIZATION
   //    (not just some bootleg copy somebody is attempting to hack into the system?)
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    // a) err - if something goes wrong
+
     if (err) return res.status(401).json({ message: 'Invalid or expired token' })
     // b) WILL RETURN USERNAME IF VALID?
     req.user = decoded
+
+    // If token has less than 15 minutes left, issue a fresh one
+    const now = Math.floor(Date.now() / 1000)
+    if (decoded.exp - now < 15 * 60) {
+      freshToken(req, res)
+    }
+
     next()
   })
+}
+
+
+
+// BLACKLIST JWT ('to 'LOG OUT')
+
+export async function blacklistToken(req, res) {
+
+   // requireAuth already verified the cookie, so req.cookies.token is guaranteed valid
+  const token = req.cookies.token
+
+  // Decode the token to get the expiry time
+  const decoded = jwt.decode(token)
+  const secondsUntilExpiry = decoded.exp - Math.floor(Date.now() / 1000)
+
+  // Add the token to the Redis blacklist with an expiry time (for automatic cleanup)
+  await redis.set(`blacklist:${token}`, '1', { ex: secondsUntilExpiry })
+
+  // Clear the cookie from the browser
+  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
+
 }

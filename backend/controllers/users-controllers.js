@@ -1,7 +1,6 @@
-import { createUser, findUser } from '../models/users-model.js'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import redis from '../models/redis-cache.js'
+import { createUser, findUser } from '../models/users-model.js'
+import { freshToken, blacklistToken } from '../controllers/jwt-auth.js'
 
 
 // SIGNUP
@@ -80,7 +79,7 @@ export async function signup(req, res) {
 // ADVANCED - NEW
   // (added logging for failed attempts)
 
-export async function login(req, res, next) {
+export async function login(req, res) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
@@ -121,10 +120,9 @@ export async function login(req, res, next) {
     return res.status(401).json({ message: 'Invalid username or password' })
   }
 
-  // THIS IS HOW WE PASS VARIABLES TO THE NEXT FUNCTION
-  // (user = the output from the database (id, username))
   req.user = user
-  next()
+  freshToken(req, res)
+  res.status(200).json({ message: `Welcome back, ${username}!`, username })
 }
 
 
@@ -148,18 +146,7 @@ export async function login(req, res, next) {
 export async function logout(req, res) {
   res.set('Cache-Control', 'no-store')
 
-  // requireAuth already verified the cookie, so req.cookies.token is guaranteed valid
-  const token = req.cookies.token
-
-  // Decode the token to get the expiry time
-  const decoded = jwt.decode(token)
-  const secondsUntilExpiry = decoded.exp - Math.floor(Date.now() / 1000)
-
-  // Add the token to the Redis blacklist with an expiry time (for automatic cleanup)
-  await redis.set(`blacklist:${token}`, '1', { ex: secondsUntilExpiry })
-
-  // Clear the cookie from the browser
-  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
+  await blacklistToken(req, res)
 
   res.status(200).json({ message: 'Logged out successfully' })
 }
