@@ -89,11 +89,18 @@ export async function checkAuth(req, res, next) {
     // b) WILL RETURN USERNAME IF VALID?
     req.user = decoded
 
+
+    // ADVANCED - NEW
+    
+    // BEGINNING OF REFRESH TOKEN - OPTION 1
+    // (The only extra code needed to keep the user logged in while they are active)
     // If token has less than 15 minutes left, issue a fresh one
     const now = Math.floor(Date.now() / 1000)
     if (decoded.exp - now < 15 * 60) {
       freshToken(req, res)
     }
+    // END OF REFRESH TOKEN - OPTION 1
+
 
     next()
   })
