@@ -13,6 +13,12 @@ export const loginSlowDown = slowDown({
   delayMs: (hits) => hits * 500  // each attempt adds 500ms more delay
 })
 
+export const commentSlowDown = slowDown({
+  windowMs: 15 * 60 * 1000,  // same window as loginLimiter
+  delayAfter: 20,              // start slowing down after 5 attempts
+  delayMs: (hits) => hits * 500  // each attempt adds 500ms more delay
+})
+
 
 
 // RATE LIMITERS
@@ -33,6 +39,13 @@ export const signupLimiter = rateLimit({
   limit: 5,
   message: { message: 'Too many accounts created — please try again in an hour' }
 })
+
+export const commentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  message: { message: 'Too many accounts created — please try again in an hour' }
+})
+
 
 
 

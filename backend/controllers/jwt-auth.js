@@ -63,7 +63,6 @@ export function freshToken(req, res) {
 
 export async function checkAuth(req, res, next) {
 
-
   // 1. Gets the token from the httpOnly cookie
   //    (browser sends it automatically — JS can't read or steal it)
   const token = req.cookies.token
@@ -91,7 +90,7 @@ export async function checkAuth(req, res, next) {
 
 
     // ADVANCED - NEW
-    
+
     // BEGINNING OF REFRESH TOKEN - OPTION 1
     // (The only extra code needed to keep the user logged in while they are active)
     // If token has less than 15 minutes left, issue a fresh one

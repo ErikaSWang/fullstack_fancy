@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs'
-import { createUser, findUser } from '../models/users-model.js'
-import { freshToken, blacklistToken } from '../controllers/jwt-auth.js'
+import { createUser, findUser } from '../models/users-models.js'
+import { freshToken } from '../helper-functions/createToken.js'
+import { blacklistToken } from '../helper-functions/blacklistToken.js'
+
 
 
 // SIGNUP
@@ -8,19 +10,21 @@ import { freshToken, blacklistToken } from '../controllers/jwt-auth.js'
 // LOGOUT
 
 
+// SIGNUP FUNCTIONS
+// 1. INTERACTING WITH SUPABASE DATABASE (check if user exists (findUser), using postgres.js)
+// 2. HASHING PASSWORD WITH BCRYPT
+// 3. INTERACTING WITH SUPABASE DATABASE (store user (createUser), using postgres.js)
+
+
 // LOGIN FUNCTIONS
-// 1. HASHING PASSWORDS WITH BCRYPT
-// 2. INTERACTING WITH SUPABASE DATABASE
-//    - adding user
-//    - getting user
-//    (using postgreSQL, via postgres.js)
-// 3. GENERATING JWT TOKENS WITH JSONWEBTOKEN
-//    (INCLUDES INTERACTING WITH REDIS CACHE)
+// 1. INTERACT WITH SUPABASE DATABASE  (get user (findUser), using postgres.js)
+// 2. HASHING PASSWORD WITH BCRYPT (to compare)
+// 3. GENERATE NEW JWT TOKEN WITH JSONWEBTOKEN
 
 
 // LOGOUT FUNCTIONS
-// 1. DELETE JWT TOKENS ON LOGOUT
-//    (INCLUDES INTERACTING WITH REDIS CACHE)
+// 1. 'DELETE' JWT TOKENS ON LOGOUT
+//    (ADD TOKEN TO REDIS CACHE BLACKLIST)
 
 
 
@@ -62,6 +66,7 @@ export async function signup(req, res) {
   const hashedPassword = await bcrypt.hash(password, 9)
 
   const user = await createUser(username, password, hashedPassword)
+
   res.status(201).json({ message: `User "${user.username}" created!`, user })
 }
 
@@ -122,6 +127,7 @@ export async function login(req, res) {
 
   req.user = user
   freshToken(req, res)
+  
   res.status(200).json({ message: `Welcome back, ${username}!`, username })
 }
 

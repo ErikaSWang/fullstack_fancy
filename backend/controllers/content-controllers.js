@@ -1,4 +1,4 @@
-import { addContent, getContent } from '../models/content-model.js';
+import { addContent, getContent } from '../models/content-models.js';
 
 // ADDING CONTENT
 // RETRIEVING CONTENT

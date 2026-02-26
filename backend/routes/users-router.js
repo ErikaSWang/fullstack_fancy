@@ -1,9 +1,8 @@
 import express from 'express'
 import { signup, login, logout } from '../controllers/users-controllers.js'
-import { checkAuth } from '../controllers/jwt-auth.js'
-import { loginLimiter, signupLimiter, loginSlowDown } from '../controllers/rate-limiters.js'
-import { validateSignup, validateLogin, validationLogging } from '../controllers/input-validators.js'
-
+import { checkAuth } from '../custom-middleware/checkToken.js'
+import { loginLimiter, signupLimiter, loginSlowDown } from '../custom-middleware/rate-limiters.js'
+import { validateSignup, validateLogin, validationLogging } from '../custom-middleware/input-validators.js'
 
 
 

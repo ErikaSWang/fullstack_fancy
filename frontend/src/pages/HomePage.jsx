@@ -16,12 +16,16 @@ function Home() {
   const [user, setUser] = useState(null)
 
 
-  // ON PAGE LOAD — ask the backend "am I still logged in?"
-  // JS can't read httpOnly cookies, so this is the only way to know
+  // ON PAGE LOAD — ask the backend:
+    // - is the user logged in?
+    // - with a valid jwt?
+    //   (returns the username)
+    //   (and shows the logged in screen instead)
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch('/api/auth', { credentials: 'include' })
+        const res = await fetch('/api/auth/check', { credentials: 'include' })
         if (res.ok) {
           const data = await res.json()
           setUser(data.username)
