@@ -164,7 +164,7 @@ app.get('/api/hello', (req, res) => {
 // FAIL-SAFE IF APIs FAIL?
 // (Also needed for Vercel & Render?)
 if (serveReactApp) {
-  app.get('*', (req, res, next) => {
+  app.get('/{*path}', (req, res, next) => {
     // Skip API routes - let them fall through to error handlers
     if (req.path.startsWith('/api')) {
       return next()

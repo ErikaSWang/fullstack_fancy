@@ -98,5 +98,5 @@ export function useCheckAuth() {
     checkAuth()
   }, [])
 
-  return { user }
+  return { user, setUser }
 }

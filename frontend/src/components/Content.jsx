@@ -51,7 +51,7 @@ const Updates = ({ formMessage, setFormMessage }) => {
       let res = await fetch('/api/getSavedContent', { credentials: 'include' })
 
       if (res.status === 401) {
-        const refreshResponse = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' })
+        const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
         if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
         res = await fetch('/api/getSavedContent', { credentials: 'include' })
       }
