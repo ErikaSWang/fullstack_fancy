@@ -1,21 +1,13 @@
-import { useState, useEffect } from 'react';
-//import useCheckAuth from '../hooks/useCheckAuth.jsx';
-import Card from 'react-bootstrap/Card';
-import Loading from '../components/Loading.jsx';
-import Login from '../components/Login.jsx';
-import Content from '../components/Content.jsx';
-import Logout from '../components/LogoutTest.jsx';
+import { useState, useEffect } from 'react'
 
 
+// CUSTOM HOOK - useFetch
+// A hook is just a function that uses other React hooks inside it (useState, useEffect)
+// This one bundles the fetch + loading + error pattern into one reusable thing
+// Instead of writing a useEffect block for every fetch, you just call useFetch(url)
 
-
-function Home() {
-  const [formMessage, setFormMessage] = useState('')
-
-  // username when logged in
+export function useCheckAuth() {
   const [user, setUser] = useState(null)
-
-
 
   // ON PAGE LOAD, WE DO A STATUS CHECK
   // -> checkJWT -> exit
@@ -106,57 +98,5 @@ function Home() {
     checkAuth()
   }, [])
 
-
-
-  
-  return (
-    <div className="container">
-
-      <Loading />
-
-      <hr />
-
-      {formMessage && 
-        <p>{formMessage}</p>
-      }
-
-      {user && (
-        <>
-          <Logout
-            formMessage={formMessage}
-            setFormMessage={setFormMessage}
-            user={user}
-            setUser={setUser}
-          />
-        </>
-      )}
-
-      <Card className="w-25 mt-2 p-4 bg-secondary text-white shadow-lg">
-        { !user ?
-          (
-            <>
-              <Login
-                formMessage={formMessage}
-                setFormMessage={setFormMessage}
-                user={user}
-                setUser={setUser}
-              />
-            </>
-          )     
-        :
-          (
-            <>
-              <Content
-                formMessage={formMessage}
-                setFormMessage={setFormMessage}
-              />
-            </>
-          )
-        }
-      </Card>
-
-    </div>
-  )
+  return { user }
 }
-
-export default Home;

@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 
 
 const Logout = ({formMessage, setFormMessage, user, setUser}) => {
 
     const testProtectedRoute = async () => {
-        const res = await fetch('/api/users/profile', { credentials: 'include' })
+        let res = await fetch('/api/users/profile', { credentials: 'include' })
+
+        if (res.status === 401) {
+            const refreshResponse = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' })
+            if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
+            res = await fetch('/api/users/profile', { credentials: 'include' })
+        }
+
         const data = await res.json()
         setFormMessage(data.message)
     }

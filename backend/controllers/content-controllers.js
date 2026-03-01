@@ -12,7 +12,7 @@ import { addContent, getContent } from '../models/content-models.js';
 // (added cache details to header
 //   - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
 
-export async function gatherInput(req, res) {
+export async function gatherInput(req, res, next) {
   res.set('Cache-Control', 'no-store')
 
   const user_id = req.user.id
@@ -21,10 +21,17 @@ export async function gatherInput(req, res) {
   // THIS ADDS THE CONTENT TO SUPABASE (see content-model.js)
   await addContent(user_id, content);
 
-  res.status(200).json({ message: `Content entered into the database!`})
+  // NEXT - just the status message to the user (end)
+  next()
+
 }
 
 
+export async function statusAdd(req, res) {
+
+  res.status(200).json({ message: `Content entered into the database!`})
+
+}
 
 // PREPARE THE INPUT FOR THE MODEL
 
@@ -32,7 +39,7 @@ export async function gatherInput(req, res) {
 // (added cache details to header
 //   - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
 
-export async function gatherOutput(req, res) {
+export async function gatherOutput(req, res, next) {
   res.set('Cache-Control', 'no-store')
 
   const user_id = req.user.id
@@ -46,5 +53,14 @@ export async function gatherOutput(req, res) {
       content: content
     }
   )
+
+  // NEXT - just the status message to the user (end)
+  next()
+}
+
+export async function statusGet(req, res) {
+
+  res.status(200).json({ message: `Content delivered`})
+
 }
 

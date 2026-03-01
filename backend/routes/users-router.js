@@ -1,8 +1,13 @@
 import express from 'express'
-import { signup, login, logout } from '../controllers/users-controllers.js'
-import { checkAuth } from '../custom-middleware/checkToken.js'
 import { loginLimiter, signupLimiter, loginSlowDown } from '../custom-middleware/rate-limiters.js'
 import { validateSignup, validateLogin, validationLogging } from '../custom-middleware/input-validators.js'
+import { submitInfo, statusSignup, confirmInfo, statusLogin, statusLogout} from '../controllers/users-controllers.js'
+import { freshJWT } from '../helper-functions/createJWT.js'
+import { freshUUID } from '../helper-functions/createUUID.js'
+import { checkJWT } from '../helper-functions/checkJWT.js'
+import { blacklistJWT } from '../helper-functions/blacklistJWT.js'
+import { checkUUID } from '../helper-functions/checkUUID.js'
+import { deleteUUID } from '../helper-functions/deleteUUID.js'
 
 
 
@@ -24,7 +29,7 @@ const router = express.Router()
 // ADVANCED - NEW
 // -> function validateSignup is in input-validators.js ->
 // -> function signup is in users-controllers.js
-router.post('/users/signup', signupLimiter, validateSignup, validationLogging, signup)
+router.post('/users/signup', signupLimiter, validateSignup, validationLogging, submitInfo, statusSignup)
 
 
 // TO LOG INTO AN EXISTING ACCOUNT
@@ -41,20 +46,20 @@ router.post('/users/signup', signupLimiter, validateSignup, validationLogging, s
 // ADVANCED - NEW
 // -> function validateLogin is in input-validators.js ->
 // -> function login is in users-controllers.js
-router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, validationLogging, login)
+router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, validationLogging, confirmInfo, freshJWT, freshUUID, statusLogin)
 
 
 // TO LOG OUT
 // POST /api/users/logout ->
 // -> function checkAuth is in jwt-authorization-check.js ->
 // -> function logout is in users-controllers.js
-router.post('/users/logout', checkAuth, logout)
+router.post('/users/logout', checkJWT, blacklistJWT, checkUUID, deleteUUID, statusLogout)
 
 
 
 // THIS IS THE ROUTE FOR THE YELLOW 'CHECK JWT' BUTTON
 // (It is an example of a protected route that only returns the username if the JWT is valid)
-router.get('/users/profile', checkAuth, (req, res) => {
+router.get('/users/profile', checkJWT, (req, res) => {
   res.status(200).json({ message: `Hello ${req.user.username}, your token is valid!` })
 })
 

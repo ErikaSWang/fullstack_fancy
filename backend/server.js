@@ -60,10 +60,11 @@ app.use((req, res, next) => {
 
 
 // REQUEST HANDLING
-// allow cross-origin requests (CORS)
+// allow cross-origin requests (CORS) - from http://localhost:500 only??)
 // credentials: true — required for cookies to be sent cross-origin
 // parse json bodies (json sent as strings, so the format needs to be checked?)
 // cookieParser — reads cookies from incoming requests (like express.json() reads the body)
+
 // ADVANCED - NEW
 app.use(cors({ origin: 'http://localhost:5000', credentials: true }))
 app.use(express.json())

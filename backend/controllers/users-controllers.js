@@ -1,7 +1,5 @@
 import bcrypt from 'bcryptjs'
 import { createUser, findUser } from '../models/users-models.js'
-import { freshToken } from '../helper-functions/createToken.js'
-import { blacklistToken } from '../helper-functions/blacklistToken.js'
 
 
 
@@ -42,7 +40,7 @@ import { blacklistToken } from '../helper-functions/blacklistToken.js'
 // (added cache details to header
 //    - NO STORING anywhere in the route (RE: remember CDNs often store info in caches))
 
-export async function signup(req, res) {
+export async function submitInfo(req, res, next) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
@@ -67,9 +65,23 @@ export async function signup(req, res) {
 
   const user = await createUser(username, password, hashedPassword)
 
-  res.status(201).json({ message: `User "${user.username}" created!`, user })
+
+  req.user = user
+
+  // NEXT - the message below
+  next()
 }
 
+
+export async function statusSignup(req, res) {
+
+  const username = req.user.username
+
+
+  res.set('Cache-Control', 'no-store')
+
+  res.status(201).json({ message: `User "${username}" created!` })
+}
 
 
 // LOG INTO EXISTING ACCOUNT (login)
@@ -84,7 +96,7 @@ export async function signup(req, res) {
 // ADVANCED - NEW
   // (added logging for failed attempts)
 
-export async function login(req, res) {
+export async function confirmInfo(req, res, next) {
   res.set('Cache-Control', 'no-store')
   const { username, password } = req.body
 
@@ -126,12 +138,24 @@ export async function login(req, res) {
   }
 
   req.user = user
-  freshToken(req, res)
-  
-  res.status(200).json({ message: `Welcome back, ${username}!`, username })
+
+  // NEXT - info is good, so the user gets fresh tokens/cookies, and a welcome message
+  next()
+
 }
 
 
+export async function statusLogin(req, res) {
+  const { username } = req.user
+
+
+  res.set('Cache-Control', 'no-store')
+
+  // THIS SENDS THE COOKIES BACK TO THE FRONTEND
+  // (in the header, rather than the body)
+  res.status(200).json({ message: `Welcome back, ${username}!`, username })
+
+}
 
 
 // LOG OUT (logout)
@@ -147,12 +171,10 @@ export async function login(req, res) {
 
 
 // ADVANCED - NEW
-// (added logging for failed attempts)
+// (I don't know why we have cache control here??)
 
-export async function logout(req, res) {
+export async function statusLogout(req, res) {
   res.set('Cache-Control', 'no-store')
-
-  await blacklistToken(req, res)
 
   res.status(200).json({ message: 'Logged out successfully' })
 }
