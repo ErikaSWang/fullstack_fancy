@@ -34,10 +34,12 @@ export function useCheckAuth() {
   // (NB The error checks all come FIRST, so the logic isn't intuitive)
 
   useEffect(() => {
+    const controller = new AbortController()
+
     const checkAuth = async () => {
       try {
-        // 1. LOGGED IN? 
-        const activeToken = await fetch('/api/auth/checkJWT', { credentials: 'include' })
+        // 1. LOGGED IN?
+        const activeToken = await fetch('/api/auth/checkJWT', { credentials: 'include', signal: controller.signal })
 
         // 1. a) YES
         //    (Status code: 200)
@@ -73,7 +75,8 @@ export function useCheckAuth() {
 
         const fastPass = await fetch('/api/auth/checkUUID', {
           method: 'POST',
-          credentials: 'include'
+          credentials: 'include',
+          signal: controller.signal
         })
 
         // Issue of fresh JWT failed — user needs to log in again, leave user as null
@@ -96,6 +99,7 @@ export function useCheckAuth() {
       }
     }
     checkAuth()
+    return () => controller.abort()
   }, [])
 
   return { user, setUser }

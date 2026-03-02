@@ -18,6 +18,7 @@ export async function checkUUID(req, res, next) {
   // Step 1. Check if the user has been logged in, the past 30 days (and still has their longterm cookie)
   //    - use cookie to extract the UUID
   const tokenUUID = req.cookies.token2
+  console.log(tokenUUID)
 
   
   // (Exit 1 - user hasn't been logged in
@@ -31,8 +32,12 @@ export async function checkUUID(req, res, next) {
   // (Exit 2 - race condition where cookie lasted longer than the redis store??)
   if (!stored) return res.status(401).json({ message: 'Session has expired — please log in again' })
 
-  // Step 3. Parse the user data
-  const user = JSON.parse(stored)
+  console.log(stored)
+
+  // Step 3. Upstash auto-parses JSON, so stored is already an object
+  const user = stored
+
+  console.log(user)
 
   // Step 4. Pass it onto the next step in the pipeline
   req.user = user

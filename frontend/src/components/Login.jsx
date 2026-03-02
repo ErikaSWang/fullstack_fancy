@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
@@ -54,13 +55,22 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                 />
               </Form.Group>
               <div className="d-flex m-2 justify-content-end">
-                <Button variant="primary" type="button" onClick={() => handleSubmit('signup')}>
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={() => handleSubmit('signup')}
+                >
                   Sign Up
                 </Button>
-                <Button variant="success" type="button" onClick={() => handleSubmit('login')}>
+                <Button
+                  variant="success"
+                  type="button"
+                  onClick={() => handleSubmit('login')}
+                >
                   Log In
                 </Button>
               </div>
+              
             </Form>
         </>
     )

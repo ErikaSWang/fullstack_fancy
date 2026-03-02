@@ -14,7 +14,7 @@ function Home() {
   const [formMessage, setFormMessage] = useState('')
   const { user, setUser } = useCheckAuth()
 
-
+  // Google Recaptcha Key (frontend): 6Le7tXwsAAAAAHY7MBxqA1M5vrd3b7V3JdQPKi1Y
   
   return (
     <div className="container">
