@@ -24,15 +24,15 @@ app.use(helmet({
     directives: {
       "default-src": ["'self'"],
       "base-uri": ["'self'"],
-      "font-src": ["'self'", "https:", "data:"],
-      "frame-src": ["'none'"],
+      "font-src": ["'self'", "data:"],
+      "frame-src": ["https://www.google.com"],  // reCAPTCHA uses a hidden iframe
       "frame-ancestors": ["'none'"], // Stronger version of X-Frame-Options
-      "img-src": ["'self'", "data:"],
+      "img-src": ["'self'", "data:", "https://www.gstatic.com"],
       "object-src": ["'none'"],
-      "script-src": ["'self'"],
+      "script-src": ["'self'", "https://www.google.com", "https://www.gstatic.com"],
       "script-src-attr": ["'none'"],
-      "style-src": ["'self'", "https:"],
-      "connect-src": ["'self'"],
+      "style-src": ["'self'"],
+      "connect-src": ["'self'", "https://www.google.com"],
       "media-src": ["'self'"],
       "form-action": ["'self'"]
     },

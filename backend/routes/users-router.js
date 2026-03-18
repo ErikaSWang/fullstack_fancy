@@ -1,5 +1,6 @@
 import express from 'express'
 import { loginLimiter, signupLimiter, loginSlowDown } from '../custom-middleware/rate-limiters.js'
+import { verifyRecaptcha } from '../custom-middleware/verifyRecaptcha.js'
 import { validateSignup, validateLogin, validationLogging } from '../custom-middleware/input-validators.js'
 import { submitInfo, statusSignup, confirmInfo, statusLogin, statusLogout} from '../controllers/users-controllers.js'
 import { freshJWT } from '../helper-functions/createJWT.js'
@@ -29,7 +30,7 @@ const router = express.Router()
 // ADVANCED - NEW
 // -> function validateSignup is in input-validators.js ->
 // -> function signup is in users-controllers.js
-router.post('/users/signup', signupLimiter, validateSignup, validationLogging, submitInfo, statusSignup)
+router.post('/users/signup', signupLimiter, verifyRecaptcha, validateSignup, validationLogging, submitInfo, statusSignup)
 
 
 // TO LOG INTO AN EXISTING ACCOUNT
