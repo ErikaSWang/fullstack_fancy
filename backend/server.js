@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 // cookieParser — reads cookies from incoming requests (like express.json() reads the body)
 
 // ADVANCED - NEW
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : ['http://localhost:5000'], credentials: true }))
+app.use(cors({ origin: 'http://localhost:5000', credentials: true }))
 app.use(express.json())
 // UNSCRAMBLES THE COOKIE, SO IT CAN BE READ/USED?
 app.use(cookieParser())
