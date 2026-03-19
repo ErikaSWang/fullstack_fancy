@@ -161,9 +161,24 @@ C. Part Three
         - express-slow-down
 
 ## Logging
-  - 
-
-
+  - (where did I add these)
+  - morgan?
 
 ## Input Validators
+  - (where did I add these)
+  - helmet?
 
+## JSON Web Tokens (JWTs)
+  - (add file names later)
+  - jwt?
+
+## Google reCAPTCHA
+  - https://developers.google.com/recaptcha/intro?_gl=1*1svz20u*_up*MQ..*_ga*MTU0ODk3MjQyNS4xNzczODk4MjQw*_ga_SM8HXJ53K2*czE3NzM4OTgyMzkkbzEkZzAkdDE3NzM4OTgyMzkkajYwJGwwJGgw
+  - CAREFUL: There's a regular, and an enterprise (the UI looks the same)
+      - the code Claude added doesn't look anything like the samples, so just let AI write it, and forget about it
+  - TWO keys:
+      1. Public key (frontend)
+      2. Private key (backend)
+  - TWO types:
+      1. V2 checkbox - very old school
+      2. V3 scoring - invisible
