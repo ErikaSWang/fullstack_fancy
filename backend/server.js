@@ -12,6 +12,10 @@ import { sendErrorMessage } from './controllers/error-controllers.js';
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// Trust Vercel's proxy so express-rate-limit can read the real client IP
+// (without this, rate-limit throws a ValidationError on every request behind a proxy)
+app.set('trust proxy', 1)
+
 
 // HTTP HEADER SECURITY MIDDLEWARE COMES FIRST (before everything)
 // (helps protect against common vulnerabilities like XSS, clickjacking, etc.)
