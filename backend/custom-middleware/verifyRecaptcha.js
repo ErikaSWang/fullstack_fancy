@@ -2,6 +2,9 @@
 // Called on signup to confirm the user clicked the "I'm not a robot" checkbox
 // v2 is simple: data.success is either true (human) or false (bot/expired)
 
+// NOTE! THIS IS PLAIN VANILLA RECAPTCHA, NOT CLOUD ENTERPRISE RECAPTCHA
+// CAREFUL NOT TO GET THE 2 MIXED UP!!
+
 export async function verifyRecaptcha(req, res, next) {
     const { recaptchaToken } = req.body
 
