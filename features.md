@@ -181,4 +181,10 @@ C. Part Three
       2. Private key (backend)
   - TWO types:
       1. V2 checkbox - very old school
+        (where to add more sites:
+          https://www.google.com/recaptcha/admin/site/747605690/settings
+        )
       2. V3 scoring - invisible
+        (where to add more sites:
+          https://www.google.com/recaptcha/admin/site/747636696/settings
+        )

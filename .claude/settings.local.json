@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install react-google-recaptcha-v3)",
       "Bash(npm uninstall react-google-recaptcha-v3)",
-      "Bash(npm install react-google-recaptcha)"
+      "Bash(npm install react-google-recaptcha)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

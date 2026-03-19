@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useState } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -8,23 +8,23 @@ import Button from 'react-bootstrap/Button';
 const Login = ({formMessage, setFormMessage, user, setUser}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [recaptchaToken, setRecaptchaToken] = useState(null)
-    const recaptchaRef = useRef(null)
+    const { executeRecaptcha } = useGoogleReCaptcha()
 
     // SUBMIT USERNAME & PASSWORD TO THE BACKEND
     // (Same function handles both signup & login)
-    // reCAPTCHA v2 checkbox is shown for signup only
+    // reCAPTCHA v3 runs silently in the background — no visible widget
 
     const handleSubmit = async (endpoint) => {
         try {
             let body = { username, password }
 
-            // For signup, require the reCAPTCHA checkbox to be ticked
+            // For signup, get a silent reCAPTCHA score from Google
             if (endpoint === 'signup') {
-                if (!recaptchaToken) {
-                    setFormMessage('Please complete the reCAPTCHA first')
+                if (!executeRecaptcha) {
+                    setFormMessage('reCAPTCHA not ready yet — please try again')
                     return
                 }
+                const recaptchaToken = await executeRecaptcha('signup')
                 body = { ...body, recaptchaToken }
             }
 
@@ -36,12 +36,6 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
             })
             const data = await res.json()
             setFormMessage(data.message)
-
-            // Reset the reCAPTCHA after each signup attempt
-            if (endpoint === 'signup') {
-                recaptchaRef.current.reset()
-                setRecaptchaToken(null)
-            }
 
             // On login the backend sets the httpOnly cookie — we just grab the username
             if (endpoint === 'login' && data.username) {
@@ -75,16 +69,6 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Form.Group>
-
-              {/* reCAPTCHA v2 checkbox - required before signup */}
-              <div className="mb-3">
-                <ReCAPTCHA
-                  ref={recaptchaRef}
-                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                  onChange={(token) => setRecaptchaToken(token)}
-                  onExpired={() => setRecaptchaToken(null)}
-                />
-              </div>
 
               <div className="d-flex m-2 justify-content-end">
                 <Button

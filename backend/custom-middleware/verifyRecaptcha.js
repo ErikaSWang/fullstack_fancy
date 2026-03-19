@@ -1,6 +1,7 @@
-// VERIFY GOOGLE reCAPTCHA v2 TOKEN
-// Called on signup to confirm the user clicked the "I'm not a robot" checkbox
-// v2 is simple: data.success is either true (human) or false (bot/expired)
+// VERIFY GOOGLE reCAPTCHA v3 TOKEN
+// Called on signup to confirm the user is likely human (silent, no checkbox)
+// v3 returns a score: 1.0 = very likely human, 0.0 = very likely bot
+// We reject anything below 0.5
 
 // NOTE! THIS IS PLAIN VANILLA RECAPTCHA, NOT CLOUD ENTERPRISE RECAPTCHA
 // CAREFUL NOT TO GET THE 2 MIXED UP!!
@@ -23,7 +24,7 @@ export async function verifyRecaptcha(req, res, next) {
 
     const data = await response.json()
 
-    if (!data.success) {
+    if (!data.success || data.score < 0.5) {
         return res.status(403).json({ message: 'reCAPTCHA check failed — please try again' })
     }
 
