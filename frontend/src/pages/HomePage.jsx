@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Loading from '../components/Loading.jsx';
 import Login from '../components/Login.jsx';
 import Content from '../components/Content.jsx';
-import Logout from '../components/LogoutTest.jsx';
+import Logout from '../components/Logout.jsx';
 
 
 

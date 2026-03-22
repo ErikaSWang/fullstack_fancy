@@ -4,7 +4,8 @@
       "Bash(npm install react-google-recaptcha-v3)",
       "Bash(npm uninstall react-google-recaptcha-v3)",
       "Bash(npm install react-google-recaptcha)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "WebFetch(domain:x.com)"
     ]
   }
 }

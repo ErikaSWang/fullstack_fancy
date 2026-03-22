@@ -4,10 +4,11 @@ import Button from 'react-bootstrap/Button';
 const Logout = ({formMessage, setFormMessage, user, setUser}) => {
 
     const testProtectedRoute = async () => {
+        
         let res = await fetch('/api/users/profile', { credentials: 'include' })
 
         if (res.status === 401) {
-            const refreshResponse = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' })
+            const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
             if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
             res = await fetch('/api/users/profile', { credentials: 'include' })
         }
@@ -15,6 +16,7 @@ const Logout = ({formMessage, setFormMessage, user, setUser}) => {
         const data = await res.json()
         setFormMessage(data.message)
     }
+
 
     const handleLogout = async () => {
         await fetch('/api/users/logout', {

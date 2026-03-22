@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-
 const Updates = ({ formMessage, setFormMessage }) => {
   const [content, setContent] = useState('')
   const [pastContent, setPastContent] = useState([])
@@ -28,7 +27,7 @@ const Updates = ({ formMessage, setFormMessage }) => {
       if (res.status === 401) {
         const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
         if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
-        
+
         res = await fetch('/api/saveContent', {
           method: 'POST',
           credentials: 'include',

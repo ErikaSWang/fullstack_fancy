@@ -12,13 +12,15 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
 
     // SUBMIT USERNAME & PASSWORD TO THE BACKEND
     // (Same function handles both signup & login)
-    // reCAPTCHA v3 runs silently in the background — no visible widget
 
     const handleSubmit = async (endpoint) => {
         try {
             let body = { username, password }
 
-            // For signup, get a silent reCAPTCHA score from Google
+            // Google runs recaptcha to prevent bot hackers
+            // v2 (the old one) uses the checkbox and/or clicking on the picture test
+            // v3 (this one) is invisible/silent, and score-based
+
             if (endpoint === 'signup') {
                 if (!executeRecaptcha) {
                     setFormMessage('reCAPTCHA not ready yet — please try again')
@@ -34,6 +36,7 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                 credentials: 'include',   // tells the browser to send/receive cookies
                 body: JSON.stringify(body)
             })
+            
             const data = await res.json()
             setFormMessage(data.message)
 
