@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { GoogleLoginButton } from "react-social-login-buttons";
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -88,6 +89,15 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                 >
                   Log In
                 </Button>
+              </div>
+
+              <hr />
+
+              <div className="d-flex m-2 justify-content-center">
+                <GoogleLoginButton
+                  className='h-100 w-75 p-1'
+                  onClick={() => window.location.href = '/api/auth/google'}
+                />
               </div>
 
             </Form>

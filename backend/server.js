@@ -5,6 +5,8 @@ import welcomeRouter from './routes/welcome-router.js';
 import usersRouter from './routes/users-router.js';
 import contentRouter from './routes/content-router.js';
 import authRouter from './routes/auth-router.js';
+import oauthRouter from './routes/oauth-router.js';
+import passport from './config/passport.js';
 import { sendErrorMessage } from './controllers/error-controllers.js';
 
 
@@ -75,6 +77,8 @@ app.use(express.json())
 // UNSCRAMBLES THE COOKIE, SO IT CAN BE READ/USED?
 app.use(cookieParser())
 
+app.use(passport.initialize())
+
 
 
 // LOGGING MIDDLEWARE is here next
@@ -132,6 +136,9 @@ app.use('/api', contentRouter);
 
 // Gets forwarded to the auth-router ->
 app.use('/api', authRouter);
+
+// Gets forwarded to the oauth-router ->
+app.use('/api', oauthRouter);
 
 
 // How to define a route right here

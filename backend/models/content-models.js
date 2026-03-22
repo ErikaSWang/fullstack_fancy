@@ -13,9 +13,10 @@ await sql`
 */
 
 
+
+
 // NOT NEEDED, BECAUSE OF JWT: Looking up user AGAIN in Supabase
 // (we are using the 'jwt id card' as a Movenpick Marche tab, instead)
-
 
 
 // ADD DATA TO THE CORRECT USER
