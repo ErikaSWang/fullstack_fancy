@@ -95,7 +95,7 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
 
               <div className="d-flex m-2 justify-content-center">
                 <GoogleLoginButton
-                  className='h-100 w-75 p-1'
+                  className='h-100 w-75 p-2'
                   onClick={() => window.location.href = '/api/auth/google'}
                 />
               </div>
