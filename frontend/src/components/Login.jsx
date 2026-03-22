@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { GoogleLoginButton } from "react-social-login-buttons";
+import { GoogleLoginButton, FacebookLoginButton, TwitterLoginButton } from "react-social-login-buttons";
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -93,10 +93,18 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
 
               <hr />
 
-              <div className="d-flex m-2 justify-content-center">
+              <div className="d-flex flex-column m-1 justify-content-center align-items-center">
                 <GoogleLoginButton
                   className='h-100 w-75 p-2'
-                  onClick={() => window.location.href = '/api/auth/google'}
+                  onClick={() => window.location.href = '/api/oauth/google'}
+                />
+                <FacebookLoginButton
+                  className='h-100 w-75 p-2'
+                  onClick={() => alert("Hello")}
+                />
+                <TwitterLoginButton
+                  className='h-100 w-75 p-2'
+                  onClick={() => alert("Hello")}
                 />
               </div>
 
