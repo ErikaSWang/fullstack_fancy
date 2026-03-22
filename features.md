@@ -188,3 +188,17 @@ C. Part Three
         (where to add more sites:
           https://www.google.com/recaptcha/admin/site/747636696/settings
         )
+
+# oAuth 2.0
+- we are using passport
+- each one needs to be done individually
+    1. Google Cloud
+        - sign up for new project
+        - WEB APPLICATION
+        - ask Claude for the callback url, and submit
+        - will get a:
+            - Client ID
+            - Client Secret
+        - SEE THE .env file
+      (NB Both Vercel's callback url and locally needs to be whitelisted)
+      (And both need to be added to the .env)
