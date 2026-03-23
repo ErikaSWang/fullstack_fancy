@@ -27,7 +27,18 @@ await sql`
   ALTER COLUMN hashed_password DROP NOT NULL,
   ALTER COLUMN password DROP NOT NULL
 `
+
+await sql`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS facebook_id VARCHAR(255) UNIQUE
+`
+
+await sql`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS twitter_id VARCHAR(255) UNIQUE
+`
 */
+
 
 
 // SQL INSERT NEW USER TO SUPABASE
@@ -85,6 +96,54 @@ export async function findOrCreateGoogleUser(googleId, displayName, email) {
     INSERT INTO users (username, google_id)
     VALUES (${username}, ${googleId})
     ON CONFLICT (google_id) DO UPDATE SET google_id = EXCLUDED.google_id
+    RETURNING id, username
+  `
+  return result[0]
+}
+
+
+// SQL SEARCH FOR EXISTING TWITTER USER
+export async function findUserByTwitterId(twitterId) {
+  const result = await sql`
+    SELECT id, username
+    FROM users
+    WHERE twitter_id = ${twitterId}
+  `
+  return result[0]
+}
+
+
+// SQL CREATE NEW TWITTER USER (no password)
+export async function findOrCreateTwitterUser(twitterId, username) {
+  const result = await sql`
+    INSERT INTO users (username, twitter_id)
+    VALUES (${username}, ${twitterId})
+    ON CONFLICT (twitter_id) DO UPDATE SET twitter_id = EXCLUDED.twitter_id
+    RETURNING id, username
+  `
+  return result[0]
+}
+
+
+// SQL SEARCH FOR EXISTING FACEBOOK USER
+export async function findUserByFacebookId(facebookId) {
+  const result = await sql`
+    SELECT id, username
+    FROM users
+    WHERE facebook_id = ${facebookId}
+  `
+  return result[0]
+}
+
+
+// SQL CREATE NEW FACEBOOK USER (no password)
+export async function findOrCreateFacebookUser(facebookId, displayName, email) {
+  const username = email || displayName
+
+  const result = await sql`
+    INSERT INTO users (username, facebook_id)
+    VALUES (${username}, ${facebookId})
+    ON CONFLICT (facebook_id) DO UPDATE SET facebook_id = EXCLUDED.facebook_id
     RETURNING id, username
   `
   return result[0]

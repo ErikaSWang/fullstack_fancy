@@ -202,3 +202,7 @@ C. Part Three
         - SEE THE .env file
       (NB Both Vercel's callback url and locally needs to be whitelisted)
       (And both need to be added to the .env)
+  2. Facebook Developer
+      - basically the same as above, since it is also passport
+  3. Twitter Developer
+      - needs a different package

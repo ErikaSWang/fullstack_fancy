@@ -100,11 +100,11 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                 />
                 <FacebookLoginButton
                   className='h-100 w-75 p-2'
-                  onClick={() => alert("Hello")}
+                  onClick={() => window.location.href = '/api/oauth/facebook'}
                 />
                 <TwitterLoginButton
                   className='h-100 w-75 p-2'
-                  onClick={() => alert("Hello")}
+                  onClick={() => window.location.href = '/api/oauth/twitter'}
                 />
               </div>
 
