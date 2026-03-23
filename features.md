@@ -76,6 +76,7 @@ C. Part Three
       db.js
         - postgres
         - .env (need to add database url)
+    (CAREFUL TO SPECIFY THE CONNECTION AS 'TRANSACTION POOLER' (i forgot why))
 
 ## Hashing Passwords
 - see fullstack-supabase

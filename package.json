@@ -17,6 +17,6 @@
     "compression": "^1.8.1",
     "react-google-recaptcha": "^3.1.0",
     "react-social-login-buttons": "^4.1.1",
-    "serve": "^13.0.4"
+    "serve": "^14.2.6"
   }
 }
