@@ -170,10 +170,12 @@ app.get('/api/hello', (req, res) => {
 // })
 
 
-// HEALTH CHECK (there's a special area to add on Supabase, possibly?)
+// HEALTH CHECK
+import sql from './models/supabase-db.js'
+
 app.get('/health', async (req, res) => {
   try {
-    await pool.query('SELECT 1');
+    await sql`SELECT 1`;
     res.status(200).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
