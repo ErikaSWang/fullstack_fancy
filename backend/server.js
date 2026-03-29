@@ -170,6 +170,24 @@ app.get('/api/hello', (req, res) => {
 // })
 
 
+// HEALTH CHECK (there's a special area to add on Supabase, possibly?)
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage()
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
 
 
 // FAIL-SAFE IF APIs FAIL?
@@ -191,6 +209,8 @@ if (serveReactApp) {
 import errorhandler from 'errorhandler'
 import createError from 'http-errors'
 
+// Development-only error handling
+// Error handler (development only)
 if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
