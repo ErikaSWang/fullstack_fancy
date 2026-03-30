@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import redis from '../models/redis-cache.js'
+import redis from '../providers/redis-cache.js'
 
 
 // CREATE A 30-DAY 'ROLLING' TOKEN (to avoid multiple calls to the database for user info)

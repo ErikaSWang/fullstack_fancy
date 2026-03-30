@@ -6,6 +6,7 @@ import usersRouter from './routes/users-router.js';
 import contentRouter from './routes/content-router.js';
 import authRouter from './routes/auth-router.js';
 import oauthRouter from './routes/oauth-router.js';
+import healthRouter from './routes/health-router.js';
 import passport from './config/passport.js';
 import { sendErrorMessage } from './controllers/error-controllers.js';
 
@@ -85,7 +86,14 @@ app.use(passport.initialize())
 // Logs all incoming requests to the terminal console (nothing shows without it)
 import morgan from 'morgan'
 
-app.use(morgan('dev')) 
+app.use(morgan('dev'))
+// Development-only logging (more verbose, with colors)
+// (production logging is less verbose, without colors, and includes more details like IP address and user agent - better for log files and analytics)
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+} else {
+  app.use(morgan('combined'))
+}
 
 
 
@@ -139,6 +147,10 @@ app.use('/api', authRouter);
 
 // Gets forwarded to the oauth-router ->
 app.use('/api', oauthRouter);
+
+// HEALTH CHECK
+// Gets forwarded to the health-router ->
+app.use('/api', healthRouter);
 
 
 // How to define a route right here

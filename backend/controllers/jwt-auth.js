@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import redis from '../models/redis-cache.js'
+import redis from '../providers/redis-cache.js'
 
 
 // CREATE JWT (and COOKIE STORE)

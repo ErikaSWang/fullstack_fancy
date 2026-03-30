@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { NavLink } from 'react-router-dom';
 import { useCheckAuth } from '../hooks/useCheckAuth.js';
 import Card from 'react-bootstrap/Card';
+import { Button } from '@mui/material';
 import Loading from '../components/Loading.jsx';
 import Login from '../components/Login.jsx';
 import Content from '../components/Content.jsx';
@@ -18,6 +20,10 @@ function Home() {
   
   return (
     <div className="container">
+
+      <NavLink to={`/dashboard`}>
+        <Button variant="contained">Dashboard</Button>
+      </NavLink>
 
       <Loading />
 

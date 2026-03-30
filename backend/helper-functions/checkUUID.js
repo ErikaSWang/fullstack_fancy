@@ -1,4 +1,4 @@
-import redis from '../models/redis-cache.js'
+import redis from '../providers/redis-cache.js'
 
 
 // This is the front desk, where we can show our key for a fast-pass to the pool

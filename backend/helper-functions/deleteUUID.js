@@ -1,4 +1,4 @@
-import redis from '../models/redis-cache.js'
+import redis from '../providers/redis-cache.js'
 
 
 // AFTER CHECK FOR VALID UUID
