@@ -47,6 +47,24 @@ router.post('/users/signup', signupLimiter, verifyRecaptcha, validateSignup, val
 // ADVANCED - NEW
 // -> function validateLogin is in input-validators.js ->
 // -> function login is in users-controllers.js
+
+
+/*
+// COOL LOGGING FUNCTION THAT HELPED US DIAGNOSE WHAT WAS WRONG WITH THE PROGRAM!
+
+const log = (label) => (_req, _res, next) => { console.log(`[DEBUG] login reached: ${label}`); next() }
+
+router.post('/users/login',
+  log('loginSlowDown'), loginSlowDown,
+  log('loginLimiter'), loginLimiter,
+  log('validateLogin'), validateLogin, validationLogging,
+  log('confirmInfo'), confirmInfo,
+  log('freshJWT'), freshJWT,
+  log('freshUUID'), freshUUID,
+  log('statusLogin'), statusLogin
+)
+*/
+
 router.post('/users/login', loginSlowDown, loginLimiter, validateLogin, validationLogging, confirmInfo, freshJWT, freshUUID, statusLogin)
 
 
