@@ -53,6 +53,10 @@ app.use(helmet({
   },
   // This solves "X-Content-Type-Options"
   noSniff: true,
+  // HSTS — tells browsers to always use HTTPS for this domain (production only)
+  hsts: process.env.NODE_ENV === 'production'
+    ? { maxAge: 31536000, includeSubDomains: true, preload: true }
+    : false,
 }));
 
 

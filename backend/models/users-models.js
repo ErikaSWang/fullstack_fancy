@@ -6,8 +6,7 @@ await sql`
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
-    hashed_password VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    hashed_password VARCHAR(255) NOT NULL
   )
 `
 */
@@ -24,8 +23,7 @@ await sql`
 
 await sql`
   ALTER TABLE users
-  ALTER COLUMN hashed_password DROP NOT NULL,
-  ALTER COLUMN password DROP NOT NULL
+  ALTER COLUMN hashed_password DROP NOT NULL
 `
 
 await sql`
@@ -42,10 +40,10 @@ await sql`
 
 
 // SQL INSERT NEW USER TO SUPABASE
-export async function createUser(username, password, hashed_password) {
+export async function createUser(username, hashed_password) {
   const result = await sql`
-    INSERT INTO users (username, hashed_password, password)
-    VALUES (${username}, ${hashed_password}, ${password})
+    INSERT INTO users (username, hashed_password)
+    VALUES (${username}, ${hashed_password})
     RETURNING id, username
   `
   return result[0]

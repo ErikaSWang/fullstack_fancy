@@ -61,12 +61,21 @@ export function callTwitter(_req, res) {
     maxAge: 5 * 60 * 1000   // 5 minutes — just long enough for the OAuth flow
   })
 
+  // Generate a random state value for CSRF protection (stored in cookie, verified in callback)
+  const oauthState = crypto.randomBytes(16).toString('hex')
+  res.cookie('twitter_state', oauthState, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 5 * 60 * 1000
+  })
+
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: process.env.TWITTER_CLIENT_ID,
     redirect_uri: process.env.TWITTER_CALLBACK_URL,
     scope: 'tweet.read users.read',
-    state: 'state',
+    state: oauthState,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256'
   })
@@ -77,11 +86,18 @@ export function callTwitter(_req, res) {
 
 // STEP 2: Twitter calls us back with a code — exchange it for a token, get the user profile
 export async function verifyTwitter(req, res, next) {
-  const { code } = req.query
+  const { code, state } = req.query
   const codeVerifier = req.cookies.twitter_cv
+  const storedState = req.cookies.twitter_state
 
-  // Clear the verifier cookie — it's single use
+  // Clear the single-use cookies
   res.clearCookie('twitter_cv')
+  res.clearCookie('twitter_state')
+
+  // Verify state to prevent CSRF attacks
+  if (!state || state !== storedState) {
+    return res.redirect(process.env.TWITTER_SUCCESS_REDIRECT || '/')
+  }
 
   // Exchange the code for an access token
   const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
@@ -99,7 +115,7 @@ export async function verifyTwitter(req, res, next) {
   })
 
   const tokenData = await tokenRes.json()
-  console.log('Twitter token response:', JSON.stringify(tokenData))
+  // console.log('Twitter token response:', JSON.stringify(tokenData))
   if (!tokenData.access_token) return res.redirect(process.env.TWITTER_SUCCESS_REDIRECT || '/')
 
   // Use the access token to get the user's Twitter profile
@@ -108,7 +124,7 @@ export async function verifyTwitter(req, res, next) {
   })
 
   const profileData = await profileRes.json()
-  console.log('Twitter profile response:', JSON.stringify(profileData))
+  // console.log('Twitter profile response:', JSON.stringify(profileData))
   if (!profileData.data) return res.redirect(process.env.TWITTER_SUCCESS_REDIRECT || '/')
   const { id, username } = profileData.data
 

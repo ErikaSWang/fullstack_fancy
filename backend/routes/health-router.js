@@ -1,5 +1,6 @@
 import express from 'express'
 import { statusHealth } from '../controllers/health-controllers.js'
+import { healthLimiter } from '../custom-middleware/rate-limiters.js'
 
 const router = express.Router()
 
@@ -16,6 +17,6 @@ router.post('/health',
 )
 */
 
-router.get('/health', statusHealth)
+router.get('/health', healthLimiter, statusHealth)
 
 export default router;

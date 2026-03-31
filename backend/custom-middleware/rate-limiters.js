@@ -43,7 +43,13 @@ export const signupLimiter = rateLimit({
 export const commentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 30,
-  message: { message: 'Too many accounts created — please try again in an hour' }
+  message: { message: 'Too many comments — please try again in 15 minutes' }
+})
+
+export const healthLimiter = rateLimit({
+  windowMs: 60 * 1000,   // 1 minute window
+  limit: 10,             // max 10 health checks per minute per IP
+  message: { message: 'Too many requests' }
 })
 
 

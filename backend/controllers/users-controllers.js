@@ -51,6 +51,7 @@ export async function submitInfo(req, res, next) {
 
   const existing = await findUser(username)
   if (existing) {
+    console.log(`[AUDIT] Signup failed - username already taken: "${username}" from IP ${req.ip}`)
     return res.status(409).json({ message: 'Username already exists' })
   }
 
@@ -63,10 +64,11 @@ export async function submitInfo(req, res, next) {
   // (the 9 is the "salt rounds" — how many times it re-scrambles (higher = slower but safer))
   const hashedPassword = await bcrypt.hash(password, 9)
 
-  const user = await createUser(username, password, hashedPassword)
+  const user = await createUser(username, hashedPassword)
 
 
   req.user = user
+  console.log(`[AUDIT] Signup successful - new user: "${username}" from IP ${req.ip}`)
 
   // NEXT - the message below
   next()
@@ -138,6 +140,7 @@ export async function confirmInfo(req, res, next) {
   }
 
   req.user = user
+  console.log(`[AUDIT] Login successful - user: "${username}" from IP ${req.ip}`)
 
   // NEXT - info is good, so the user gets fresh tokens/cookies, and a welcome message
   next()
