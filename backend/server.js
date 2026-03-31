@@ -1,6 +1,4 @@
 import * as Sentry from '@sentry/node'
-Sentry.init({ dsn: process.env.SENTRY_DSN })
-
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -133,6 +131,12 @@ if (serveReactApp) {
 
 
 
+// SENTRY TEST ROUTE - uncomment to trigger a test error at /api/debug-sentry
+// app.get("/api/debug-sentry", function mainHandler(req, res) {
+//   throw new Error("My first Sentry error!");
+// });
+
+
 // ACTUAL ROUTES HERE
 
 // 'Mounting' the routes
@@ -206,8 +210,17 @@ if (serveReactApp) {
 
 
 
-// SENTRY ERROR HANDLER - must come before other error handlers
+// SENTRY ERROR HANDLER
+// (must come after the controllers, but before other error handlers)
 Sentry.setupExpressErrorHandler(app)
+
+// Optional fallthrough error handler
+app.use(function onError(err, req, res, next) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.end(res.sentry + "\n");
+});
 
 // ERROR HANDLING MIDDLEWARE goes after everything else
 import errorhandler from 'errorhandler'

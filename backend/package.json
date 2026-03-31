@@ -4,8 +4,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node --env-file=../.env server.js",
-    "dev": "node --env-file=../.env --watch server.js"
+    "start": "node --env-file=../.env --import ./instrument.js server.js",
+    "dev": "node --env-file=../.env --import ./instrument.js --watch server.js"
   },
   "dependencies": {
     "@sentry/node": "^10.46.0",
