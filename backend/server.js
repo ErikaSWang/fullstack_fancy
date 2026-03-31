@@ -1,3 +1,6 @@
+import * as Sentry from '@sentry/node'
+Sentry.init({ dsn: process.env.SENTRY_DSN })
+
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -9,6 +12,8 @@ import oauthRouter from './routes/oauth-router.js';
 import healthRouter from './routes/health-router.js';
 import passport from './config/passport.js';
 import { sendErrorMessage } from './controllers/error-controllers.js';
+import pinoHttp from 'pino-http'
+import logger from './config/logger.js'
 
 
 // SETTING UP THE SERVER
@@ -87,6 +92,7 @@ app.use(passport.initialize())
 import morgan from 'morgan'
 
 app.use(morgan('dev'))
+app.use(pinoHttp({ logger }))
 // Development-only logging (more verbose, with colors)
 // (production logging is less verbose, without colors, and includes more details like IP address and user agent - better for log files and analytics)
 if (process.env.NODE_ENV === 'development') {
@@ -199,6 +205,9 @@ if (serveReactApp) {
 
 
 
+
+// SENTRY ERROR HANDLER - must come before other error handlers
+Sentry.setupExpressErrorHandler(app)
 
 // ERROR HANDLING MIDDLEWARE goes after everything else
 import errorhandler from 'errorhandler'
