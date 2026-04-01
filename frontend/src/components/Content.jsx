@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
+import * as formik from 'formik';
+import * as yup from 'yup';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+
+
 const Updates = ({ formMessage, setFormMessage }) => {
-  const [content, setContent] = useState('')
   const [pastContent, setPastContent] = useState([])
+
+  const { Formik } = formik;
+
+  const schema = yup.object().shape({
+    content: yup.string().required('Please enter some content'),
+  });
 
   // SAVE USER CONTENT TO THE BACKEND
   // NB. THIS ROUTE IS ONLY AVAILABLE IF YOU HAVE A VALID TOKEN
@@ -15,13 +24,13 @@ const Updates = ({ formMessage, setFormMessage }) => {
 
 
   // ALTERNATIVE WOULD BE TO USE checkJWT FIRST??
-  const saveContent = async () => {
+  const saveContent = async (values, { resetForm }) => {
     try {
       let res = await fetch('/api/saveContent', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ content: values.content })
       })
 
       if (res.status === 401) {
@@ -32,12 +41,13 @@ const Updates = ({ formMessage, setFormMessage }) => {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content })
+          body: JSON.stringify({ content: values.content })
         })
       }
 
       const data = await res.json()
       setFormMessage(data.message)
+      resetForm()
 
     } catch (err) {
       setFormMessage('Please try again')
@@ -65,35 +75,47 @@ const Updates = ({ formMessage, setFormMessage }) => {
   }
 
     return (
-        <>
-            <Form>
+      <>
+        <Formik
+          initialValues={{ content: '' }}
+          validationSchema={schema}
+          onSubmit={saveContent}
+        >
+          {({ handleSubmit, handleChange, values, touched, errors }) => (
+            <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formContent">
                     <Form.Label>Content</Form.Label>
                     <Form.Control
-                    type="text"
-                    as="textarea"
-                    rows={3}
-                    placeholder="Enter your thoughts here ..."
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                      name="content"
+                      as="textarea"
+                      rows={3}
+                      placeholder="Enter your thoughts here ..."
+                      value={values.content}
+                      onChange={handleChange}
+                      isValid={touched.content && !errors.content}
+                      isInvalid={touched.content && !!errors.content}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.content}
+                    </Form.Control.Feedback>
                 </Form.Group>
                 <div className="d-flex mb-3 justify-content-end">
-                    <Button variant="primary" onClick={getContent}>
+                    <Button variant="primary" type="button" onClick={getContent}>
                       Load My Content
                     </Button>
-                    <Button variant="info" type="button" className="ms-2" onClick={saveContent}>
-                    Submit
+                    <Button variant="info" type="submit" className="ms-2">
+                      Submit
                     </Button>
                 </div>
             </Form>
-
-            {pastContent.map((item) => ( 
-                <Card key={item.id} className="m-2 bg-light shadow-sm">
-                    <Card.Body>{item.content}</Card.Body>
-                </Card>
-            ))}
-        </>
+          )}
+        </Formik>
+        {pastContent.map((item) => (
+            <Card key={item.id} className="m-2 bg-light shadow-sm">
+                <Card.Body>{item.content}</Card.Body>
+            </Card>
+        ))}
+      </>
     )
 }
 
