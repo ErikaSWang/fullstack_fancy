@@ -19,6 +19,10 @@ await sql`
 // (we are using the 'jwt id card' as a Movenpick Marche tab, instead)
 
 
+// SQL injection protection: same as users-models.js — the `sql` template tag
+// automatically uses prepared statements, so user-supplied values (user_id,
+// content) are always sent as separate parameters, never as part of the query string.
+
 // ADD DATA TO THE CORRECT USER
 
 export async function addContent(user_id, content) {

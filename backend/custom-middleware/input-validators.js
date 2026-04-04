@@ -28,8 +28,10 @@ export const validateSignup = [
   body('username')
     .trim()
     .notEmpty().withMessage('Username is required')
+    // .escape() — converts special characters to HTML entities (e.g. < becomes &lt;) to prevent XSS attacks
     .escape()
     .isLength({ min: 3, max: 18 }).withMessage('Username must be 3-20 characters')
+    // .isAlphanumeric() rejects anything that isn't letters/numbers — so <script>, onerror=, onload= all fail immediately
     .isAlphanumeric().withMessage('Username can only contain letters and numbers'),
 
   body('password')

@@ -6,7 +6,7 @@ await sql`
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
-    hashed_password VARCHAR(255) NOT NULL
+    hashed_password VARCHAR(255) NOT NULL,
   )
 `
 */
@@ -35,8 +35,51 @@ await sql`
   ALTER TABLE users
   ADD COLUMN IF NOT EXISTS twitter_id VARCHAR(255) UNIQUE
 `
+
+await sql`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+`
+
+await sql`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'
+`
 */
 
+
+
+
+
+
+// ============================================================
+// SQL INJECTION PROTECTION — ALREADY BUILT IN
+// ============================================================
+// THE THREAT: SQL Injection
+//
+// If you built SQL queries by concatenating strings, a malicious user
+// could type SQL code as their username/password and trick the database
+// into running it. Classic example — username: ' OR '1'='1
+// That turns "WHERE username = '...'" into a condition that's always
+// true, returning every user in the database. Scary!
+//
+// HOW WE'RE PROTECTED:
+// The `sql` template tag (from the 'postgres' / porsager library) sends
+// queries to PostgreSQL as PREPARED STATEMENTS automatically. That means
+// the query structure and the user-supplied values are sent separately:
+//
+//   What you write:  sql`SELECT * FROM users WHERE username = ${username}`
+//   What gets sent:  query  → SELECT * FROM users WHERE username = $1
+//                    params → ['actualUsernameValue']
+//
+// PostgreSQL receives them as two separate things and never interprets
+// the value as SQL. No matter what the user types, it's just data —
+// it can NEVER be executed as a command.
+//
+// The ${} syntax here is NOT regular JavaScript string interpolation.
+// It's the library intercepting the value and routing it safely.
+// This protection is automatic on every query in this file.
+// ============================================================
 
 
 // SQL INSERT NEW USER TO SUPABASE

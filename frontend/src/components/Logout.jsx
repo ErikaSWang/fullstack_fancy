@@ -8,7 +8,7 @@ const Logout = ({formMessage, setFormMessage, user, setUser}) => {
         let res = await fetch('/api/users/profile', { credentials: 'include' })
 
         if (res.status === 401) {
-            const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
+            const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
             res = await fetch('/api/users/profile', { credentials: 'include' })
         }
@@ -21,7 +21,8 @@ const Logout = ({formMessage, setFormMessage, user, setUser}) => {
     const handleLogout = async () => {
         await fetch('/api/users/logout', {
             method: 'POST',
-            credentials: 'include'
+            credentials: 'include',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }  // CSRF: proves this came from our app
         })
         setUser(null)
         setFormMessage('Logged out!')

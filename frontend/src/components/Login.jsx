@@ -54,7 +54,10 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
 
             const res = await fetch(`/api/users/${endpoint}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'  // CSRF: proves this came from our app (attackers can't forge custom headers cross-site)
+                },
                 credentials: 'include',   // tells the browser to send/receive cookies
                 body: JSON.stringify(body)
             })

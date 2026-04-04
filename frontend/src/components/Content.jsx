@@ -29,18 +29,18 @@ const Updates = ({ formMessage, setFormMessage }) => {
       let res = await fetch('/api/saveContent', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ content: values.content })
       })
 
       if (res.status === 401) {
-        const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
+        const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
 
         res = await fetch('/api/saveContent', {
           method: 'POST',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
           body: JSON.stringify({ content: values.content })
         })
       }
@@ -60,7 +60,7 @@ const Updates = ({ formMessage, setFormMessage }) => {
       let res = await fetch('/api/getSavedContent', { credentials: 'include' })
 
       if (res.status === 401) {
-        const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include' })
+        const refreshResponse = await fetch('/api/auth/checkUUID', { method: 'POST', credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         if (!refreshResponse.ok) { setFormMessage('Session expired — please log in again'); return }
         res = await fetch('/api/getSavedContent', { credentials: 'include' })
       }

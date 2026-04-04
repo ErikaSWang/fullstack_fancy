@@ -76,6 +76,7 @@ export function useCheckAuth() {
         const fastPass = await fetch('/api/auth/checkUUID', {
           method: 'POST',
           credentials: 'include',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },  // CSRF: proves this came from our app
           signal: controller.signal
         })
 
