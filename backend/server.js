@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as Sentry from '@sentry/node'
 import express from 'express'
 import cors from 'cors'
@@ -39,9 +40,19 @@ app.set('trust proxy', 1)
 // ─────────────────────────────────────────────────────────────────
 // SECURITY ISSUES ADDRESSED:
 //
-//  • XSS (Cross-Site Scripting): Attackers inject malicious scripts into
-//    your pages. Content Security Policy (CSP) tells the browser which
-//    scripts are allowed to run — anything not on the list gets blocked.
+//  • XSS (Cross-Site Scripting) — three variations, all addressed by Helmet's CSP:
+//
+//    - Stored XSS: attacker saves a malicious script to your database; it runs
+//      in every other user's browser when they view that content.
+//    - Reflected XSS: malicious script is embedded in a URL (e.g. a phishing link);
+//      the server echoes it back in the HTML response and it runs on page load.
+//    - DOM-based XSS: happens entirely in the browser — JS reads from the URL or
+//      DOM and writes it unsafely back into the page (no server involved).
+//
+//    CSP is the backstop for all three: even if a malicious script tag somehow
+//    made it into the page, the browser refuses to run it if it's not on the whitelist.
+//    (See input-validators.js for the input-level defences against stored/reflected XSS,
+//    and React's automatic escaping for DOM-based XSS.)
 //
 //  • Clickjacking: A malicious site embeds your app in a hidden <iframe>
 //    and tricks users into clicking things. frame-ancestors: 'none' and

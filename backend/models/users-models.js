@@ -55,13 +55,33 @@ await sql`
 // ============================================================
 // SQL INJECTION PROTECTION — ALREADY BUILT IN
 // ============================================================
-// THE THREAT: SQL Injection
+// THE THREAT: SQL Injection — four variations, all blocked at the root.
 //
-// If you built SQL queries by concatenating strings, a malicious user
-// could type SQL code as their username/password and trick the database
-// into running it. Classic example — username: ' OR '1'='1
-// That turns "WHERE username = '...'" into a condition that's always
-// true, returning every user in the database. Scary!
+// All four techniques below only work if user input can be interpreted
+// as SQL. Prepared statements make that impossible — so all four are
+// neutralised by the same defence.
+//
+//  1. UNION-BASED INJECTION:
+//     Attacker appends a UNION SELECT to piggyback a second query onto yours,
+//     extracting data from other tables (e.g. all usernames + passwords).
+//     Example input: ' UNION SELECT username, password FROM users --
+//
+//  2. ERROR-BASED INJECTION:
+//     Attacker deliberately triggers a database error that includes data
+//     in the error message (e.g. the database version, table names, column names).
+//     They use that info to map your database structure for further attacks.
+//
+//  3. TIME-BASED (BLIND) INJECTION:
+//     The app doesn't show query results or errors, so the attacker injects
+//     a time delay (e.g. pg_sleep(5)) and measures the response time.
+//     If the page takes 5 extra seconds, they know their condition was true.
+//     Slow and patient, but it works — they can extract data one bit at a time.
+//
+//  4. OUT-OF-BAND INJECTION:
+//     Instead of reading data from the HTTP response, the attacker makes
+//     the database send data to an external server they control
+//     (e.g. via a DNS lookup or HTTP request triggered from inside the DB).
+//     Used when the other techniques are blocked or too slow.
 //
 // HOW WE'RE PROTECTED:
 // The `sql` template tag (from the 'postgres' / porsager library) sends
@@ -74,7 +94,8 @@ await sql`
 //
 // PostgreSQL receives them as two separate things and never interprets
 // the value as SQL. No matter what the user types, it's just data —
-// it can NEVER be executed as a command.
+// it can NEVER be executed as a command. All four attack types above
+// require the input to BE SQL — so all four are stopped here.
 //
 // The ${} syntax here is NOT regular JavaScript string interpolation.
 // It's the library intercepting the value and routing it safely.
