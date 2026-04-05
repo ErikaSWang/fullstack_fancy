@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node --env-file=../.env --import ./providers/instrument.js server.js",
     "dev": "node --env-file=../.env --import ./providers/instrument.js --watch server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "audit": "npm audit",
+    "check": "npm audit && npm run lint"
   },
   "dependencies": {
     "@sentry/node": "^10.46.0",

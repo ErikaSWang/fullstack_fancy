@@ -100,9 +100,9 @@ app.use(helmet({
 
       // font-src: controls where fonts can be loaded from.
       // 'self' = only fonts served by your own server.
-      // 'data:' = allows inline fonts (base64-encoded in CSS) — needed by some
-      // icon libraries and Bootstrap that embed fonts directly in stylesheets.
-      "font-src": ["'self'", "data:"],
+      // Note: 'data:' (inline base64 fonts) was removed — our app doesn't use any,
+      // and allowing it was flagged as low-risk by pen testing.
+      "font-src": ["'self'"],
 
       // frame-src: controls which URLs are allowed inside <iframe> tags on YOUR page.
       // reCAPTCHA v2 works by loading a Google iframe (the checkbox widget).
@@ -119,9 +119,10 @@ app.use(helmet({
 
       // img-src: controls where images can be loaded from.
       // 'self' = your own server.
-      // 'data:' = inline images (base64 encoded directly in HTML/CSS — common in icons).
+      // Note: 'data:' (inline base64 images) was removed — our app doesn't use any,
+      // and allowing it was flagged as low-risk by pen testing.
       // gstatic.com = Google's static content server (reCAPTCHA loads images from here).
-      "img-src": ["'self'", "data:", "https://www.gstatic.com"],
+      "img-src": ["'self'", "https://www.gstatic.com"],
 
       // object-src: controls <object>, <embed>, and <applet> tags — old ways of
       // embedding Flash, Java applets, and plugins. These are essentially dead

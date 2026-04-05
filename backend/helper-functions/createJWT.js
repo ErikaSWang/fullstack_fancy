@@ -16,12 +16,14 @@ import jwt from 'jsonwebtoken'
 export function freshJWT(req, res, next) {
 
   // THESE ARE THE VARIABLES WE PASSED FROM THE LAST FUNCTION
-  const { id, username } = req.user
+  const { id, username, role } = req.user
 
   // USE THE JWT PACKAGE TO CREATE A TOKEN
   // (uses our personal ID from .env to ensure that it was us that issued it)
+  // role is included so requireRole() middleware can authorise admin routes
+  // without an extra database lookup on every request
   const tokenJWT = jwt.sign(
-    { id, username },
+    { id, username, role },
     process.env.JWT_SECRET,
     { expiresIn: '15m' }
   )

@@ -130,7 +130,7 @@ export async function createUser(username, password) {
 // (seems to need the index)
 export async function findUser(username) {
   const result = await sql`
-    SELECT id, username, hashed_password
+    SELECT id, username, hashed_password, role
     FROM users
     WHERE username = ${username}
   `
