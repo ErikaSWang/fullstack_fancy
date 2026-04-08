@@ -9,10 +9,15 @@ import Content from '../components/Content.jsx';
 import Logout from '../components/Logout.jsx';
 
 
-
+// Uses 4 components:
+    // Loading
+    // Login
+    // Content
+    // Logout
 
 function Home() {
 
+  // Uses 2 state variables (passed in as props to the components):
   const [formMessage, setFormMessage] = useState('')
   const { user, setUser } = useCheckAuth()
 

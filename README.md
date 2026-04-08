@@ -1,8 +1,19 @@
-# Full Stack App (COPYING/FORKING THIS TEMPLATE)
+# Full Stack App
 
-A minimal full-stack application skeleton with React + Vite (frontend) and Express (backend).
+A minimual full-stack application that strives to be state-of-the-art secure
+Frontend: Vite React Javascript
+Backend: Express
 
-## Project Structure
+Additional external sources used:
+- Supabase DB
+- Upstash Redis Cache
+- Vercel deployment
+- Sentry error logging
+
+* Accounts & keys needed for forking
+
+
+## Basic Project Structure
 
 ```
 .
@@ -18,7 +29,9 @@ A minimal full-stack application skeleton with React + Vite (frontend) and Expre
 │   ├── package.json
 │   └── vite.config.js
 
-└── package.json     # Root package.json
+├── package.json     # Root package.json
+├── .env             # NEED TO ADD ENVIRONMENT VARIABLES, TO GET THIS TO WORK
+└── vercel.json      # Needed to deploy to Vercel
 ```
 
 ## Setup Instructions
@@ -27,31 +40,14 @@ A minimal full-stack application skeleton with React + Vite (frontend) and Expre
 - Node.js (v16 or higher)
 - npm
 
+### Once you have signed up for Supabase, Upstash, and Sentry ...
+
 ### Installation Instructions
+- npm install dependencies in:
+   - backend
+   - frontend
+   - root
 
-
-
-1. **Install server dependencies**:
-   ```(in the terminal line)
-   cd server
-   npm install
-   ```
-
-2. **Install client dependencies**:
-   ```(in the terminal line)
-   cd ../client
-   npm install
-   ```
-
-3. **Go back to root**:
-   ```(in the terminal line)
-   cd ..
-   ```
-
-4. **Install root dependencies**:
-   ```(in the terminal line)
-   npm install
-   ```
 
 ### Running the App
 
@@ -69,21 +65,19 @@ This will:
 - Start the Vite dev server on `http://localhost:5000`
 - Automatically open your browser to the frontend
 
-**The frontend will display a message fetched from the backend API.**
-
 
 
 ## Individual Commands
 
-If you want to run them separately:
+If you want to run them separately - open TWO terminals (with split panel)
 
 **Backend only:**
-```(in the terminal line)
+```(in terminal line #1)
 cd server && npm start
 ```
 
-**Frontend only (from root or client directory):**
-```(in the terminal line)
+**Frontend only:**
+```(in terminal line #2)
 cd client && npm run dev
 ```
 
@@ -105,18 +99,15 @@ cd client && npm run dev
 ## Adding Features
 
 ### Add a new API endpoint (backend)
-Edit `server/server.js`:
-```javascript
-app.get('/api/your-endpoint', (req, res) => {
-  res.json({ data: 'your response' })
-})
-```
+
+Entry point is server.js
+
 
 ### Add a new React component (frontend)
-Create a new file in `client/src/` and import it in `App.jsx`.
+
+Entry point is index.html -> src/main.jsx -> src/App.jsx -> src/components/Root.jsx -> then ../(various pages)
+
 
 ## Notes
-
 - The frontend automatically opens in Chrome (configured in Vite)
-- CORS is enabled to allow frontend-backend communication
 - Development mode watches for file changes and hot-reloads

@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
+
+// 3 different routes for fetching data from the backend
+
 const Loading = () => {
+
+    // 3 state variables to hold the data that's been fetched from the backend
+    // 3 STATE VARIABLES FOR THE STATUS OF THE REQUESTS
+    // (loading is used to show a loading message while in progress)
+
     const [hello, setHello] = useState('')
     const [welcome, setWelcome] = useState('')
-    const [errorCheck, setErrorCheck] = useState('')
+
     const [helloLoading, setHelloLoading] = useState(true)
     const [welcomeLoading, setWelcomeLoading] = useState(true)
-    const [failcheckLoading, setFailcheckLoading] = useState(true)
 
 
     useEffect(() => {
@@ -41,27 +48,12 @@ const Loading = () => {
   }, [])
 
 
-  useEffect(() => {
-    const fetchFailCheck = async () => {
-      try {
-        const res = await fetch('/api/errorFail')
-        const data = await res.json()
-        setErrorCheck(data.message)
-        setFailcheckLoading(false)
-      } catch (err) {
-        setErrorCheck('The error check has failed (server error, not 404 bad route error)');
-        setFailcheckLoading(false)
-      }
-    }
-    fetchFailCheck()
-  }, [])
 
     return (
         <>
             <h1>Full Stack App</h1>
             <p>{welcomeLoading ? 'Loading...' : welcome}</p>
             <p>{helloLoading ? 'Loading...' : hello}</p>
-            <p>{failcheckLoading ? 'Loading...' : errorCheck}</p>
         </>
     )
 }

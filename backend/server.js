@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import * as Sentry from '@sentry/node'
 import express from 'express'
 import cors from 'cors'
@@ -19,6 +18,7 @@ import { csrfProtection } from './custom-middleware/csrf-protection.js'
 // SETTING UP THE SERVER
 const app = express()
 const PORT = process.env.PORT || 3000
+
 
 // PROXY TRUST
 // ─────────────────────────────────────────────────────────────────
@@ -396,7 +396,7 @@ app.get('/api/hello', (req, res) => {
 });
 
 
-// REACT SPA CATCH-ALL
+// ERROR CATCH-ALL
 // ─────────────────────────────────────────────────────────────────
 // React Router handles navigation on the frontend. If a user hits a URL
 // like /profile directly (page refresh or bookmark), the browser asks
