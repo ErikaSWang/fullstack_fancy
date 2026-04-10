@@ -6,6 +6,13 @@ import { useState, useEffect } from 'react'
 // This one bundles the fetch + loading + error pattern into one reusable thing
 // Instead of writing a useEffect block for every fetch, you just call useFetch(url)
 
+// NOTE: THERE'S SOME SPECIAL CODED ADDED TO PREVENT <React.StrictMode> FROM RENDERING TWICE (in development mode)
+// (which was causing race issues)
+// The extra code:
+      // const controller = new AbortController()
+      // signal: controller.signal (ADDED TO THE FETCH OPTIONS)
+      // return () => controller.abort()
+
 export function useCheckAuth() {
   const [user, setUser] = useState(null)
 
@@ -39,7 +46,10 @@ export function useCheckAuth() {
     const checkAuth = async () => {
       try {
         // 1. LOGGED IN?
-        const activeToken = await fetch('/api/auth/checkJWT', { credentials: 'include', signal: controller.signal })
+        const activeToken = await fetch('/api/auth/checkJWT', {
+          credentials: 'include',
+          signal: controller.signal
+        })
 
         // 1. a) YES
         //    (Status code: 200)
