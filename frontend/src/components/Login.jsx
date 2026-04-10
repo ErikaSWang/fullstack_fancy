@@ -2,9 +2,9 @@
 // Looks like this is similar to useState()
 // But useState() causes a re-render (which cause a lag time)
 // useRef() is immediate
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
-// This is the legacy 'silent' score version (no user test)
+// This is v3 the legacy 'silent' score version (no user test, that is v2)
 // See: https://developers.google.com/recaptcha
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { GoogleLoginButton, FacebookLoginButton } from "react-social-login-buttons";
@@ -13,13 +13,16 @@ import { GoogleLoginButton, FacebookLoginButton } from "react-social-login-butto
 // See: https://react-bootstrap.netlify.app/docs/forms/validation/
 import * as formik from 'formik';
 import * as yup from 'yup';
+
 // Claude found this package that adds password helpers to yup, so we don't have to write regexes for all the different character types
 // See: https://www.npmjs.com/package/yup-password?activeTab=readme
 import YupPassword from 'yup-password';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-
+import InputGroup from 'react-bootstrap/InputGroup';
+import { Eye } from 'react-bootstrap-icons';
+import { EyeSlash } from 'react-bootstrap-icons';
 
 // USERS ENTERING/SENDING DATA TO THE BACKEND REQUIRES A *LOT* OF SECURITY!
 
@@ -31,6 +34,8 @@ import Button from 'react-bootstrap/Button';
 // (actual validation happens in the backend)
 
 const Login = ({formMessage, setFormMessage, user, setUser}) => {
+    const [passwordVisibility, setPasswordVisibility] = useState(false);
+
     const { executeRecaptcha } = useGoogleReCaptcha()
 
     const { Formik } = formik;
@@ -58,16 +63,24 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
     // NOTE: Avoid using handleSubmit (conflicts with Formik's own handleSubmit)
     // 'values' passes in:
         //  { username: '...', password: '...' }
+
+    // MORE NOTES ABOUT FORMIK:
+        // Formik AUTOMATICALLY SUBMITS 2 VARIABLES WITH onSubmit:
+        // 1. 'values' - the form data
+        // 2. formikHelpers - a whole suite of built-in functions
+              // resetForm (clears all the fields)
+              // setSubmitting
+              // setErrors
+              // setFieldValue (can code a value)
+              // ++
+
+    // (Claude says using { resetForm} is standard javascript destructuring?)
+    // (The same as passing in formikHelpers and then using formikHelpers.resetForm() down below??)
+    
     const submitToBackend = async (values, { resetForm }) => {
         try {
             let body = { username: values.username, password: values.password }
-
-            // Google runs recaptcha to prevent bot hackers
-            // v2 (the old one) uses the checkbox and/or clicking on the picture test
-            // v3 (this one) is invisible/silent, and score-based
-
-            
-            
+ 
             // HERE IS THE useRef() IN ACTION - submitButton is the useRef()!
             // (so endpoint will come from an update of useRef() when the user chooses a submit button)
             const endpoint = submitButton.current
@@ -143,6 +156,10 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
         }
     }
 
+    const togglePasswordVisibility = () => {
+      setPasswordVisibility(!passwordVisibility);
+    };
+
     
 
     // NB. Code is BASICALLY identical to the sample on the React Bootstrap website
@@ -162,37 +179,46 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
         >
           {({ handleSubmit, handleChange, values, touched, errors }) => (
             // CAREFUL: You cannot use handleSubmit() because Formik needs it (and will cause errors if you try to use it)
+            
             <Form noValidate onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="username"
-                  placeholder="Enter username"
-                  value={values.username}
-                  onChange={handleChange}
-                  isValid={touched.username && !errors.username}
-                  isInvalid={touched.username && !!errors.username}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.username}
-                </Form.Control.Feedback>
-              </Form.Group>
+              
+                <Form.Group className="mb-3" controlId="formBasicUsername">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="username"
+                    placeholder="Enter username"
+                    value={values.username}
+                    onChange={handleChange}
+                    isValid={touched.username && !errors.username}
+                    isInvalid={touched.username && !!errors.username}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.username}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
 
               <Form.Group className="mb-3" controlId="formBasicPassword">
+                
                 <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={values.password}
-                  onChange={handleChange}
-                  isValid={touched.password && !errors.password}
-                  isInvalid={touched.password && !!errors.password}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.password}
-                </Form.Control.Feedback>
+                <InputGroup>
+                  <Form.Control
+                    type={passwordVisibility ? "text" : "password"}
+                    name="password"
+                    placeholder="Password"
+                    value={values.password}
+                    onChange={handleChange}
+                    isValid={touched.password && !errors.password}
+                    isInvalid={touched.password && !!errors.password}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.password}
+                  </Form.Control.Feedback>
+                  <Button variant="light" onClick={() => togglePasswordVisibility()}>
+                    {passwordVisibility ? <EyeSlash color="black" /> : <Eye color="black" />}
+                  </Button>
+                </InputGroup>
               </Form.Group>
 
               <div className="d-flex m-2 justify-content-end">

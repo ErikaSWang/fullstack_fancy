@@ -1,12 +1,29 @@
 import { useState, useEffect } from 'react';
+
+// I learned about Yup and Formik from React Bootstrap
+// See: https://react-bootstrap.netlify.app/docs/forms/validation/
+// Formik & Yup are mostly for enhancing the user experience, by providing feedback on input formats
+// (actual validation happens in the backend)
 import * as formik from 'formik';
 import * as yup from 'yup';
+
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 
-const Updates = ({ formMessage, setFormMessage }) => {
+// 2 ROUTES:
+    // 1. Get content
+    // 2. Save content
+
+// NB. THIS ROUTE IS ONLY AVAILABLE IF YOU HAVE A VALID TOKEN
+// (Token is included in the headers - more below)
+
+// (it's like having a valid pool pass - if you are a guest at the hotel, you can use your key to get one)
+// (otherwise you have to check into the hotel, to get a key, to get a poolpass)
+// Body - don't forget JSON needs to be sent as a string, and put back together on the other end
+
+const Content = ({ formMessage, setFormMessage }) => {
   const [pastContent, setPastContent] = useState([])
 
   const { Formik } = formik;
@@ -15,21 +32,31 @@ const Updates = ({ formMessage, setFormMessage }) => {
     content: yup.string().required('Please enter some content'),
   });
 
-  // SAVE USER CONTENT TO THE BACKEND
-  // NB. THIS ROUTE IS ONLY AVAILABLE IF YOU HAVE A VALID TOKEN
-  // SO THE TOKEN IS INCLUDED IN THE HEADERS
-  // (it's like having a valid pool pass - if you are a guest at the hotel, you can use your key to get one)
-  // (otherwise you have to check into the hotel, to get a key, to get a poolpass)
-  // Body - don't forget JSON needs to be sent as a string, and put back together on the other end
+  // 1. Save content
+      // (See Login for notes on formik, and why we're passing in values, and { resetForm })
+      // (See Login for notes on all the JSON options we are passing in)
 
-
-  // ALTERNATIVE WOULD BE TO USE checkJWT FIRST??
+      // NOTE: THIS IS A PROTECTED ROUTE!!
+      // THE TRY INCLUDES 3 OPTIONS:
+          // i. VALID TOKEN
+                // content is saved, success message is returned)
+          // ii. 401: EXPIRED TOKEN IS PRESENT
+                // An expired token means the user is logged in, but just needs a new token
+                    // (we refresh the token
+                    // then try the save again)
+          // iii. 401: NO TOKEN
+                // No token means the user is not logged in
+                // (This really shouldn't happen, because the user shouldn't be seeing the content page)
+                
   const saveContent = async (values, { resetForm }) => {
     try {
       let res = await fetch('/api/saveContent', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         body: JSON.stringify({ content: values.content })
       })
 
@@ -40,7 +67,10 @@ const Updates = ({ formMessage, setFormMessage }) => {
         res = await fetch('/api/saveContent', {
           method: 'POST',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
           body: JSON.stringify({ content: values.content })
         })
       }
@@ -119,4 +149,4 @@ const Updates = ({ formMessage, setFormMessage }) => {
     )
 }
 
-export default Updates;
+export default Content;
