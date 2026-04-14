@@ -50,8 +50,6 @@ await sql`
 
 
 
-
-
 // ============================================================
 // SQL INJECTION PROTECTION — ALREADY BUILT IN
 // ============================================================
@@ -163,28 +161,6 @@ export async function findOrCreateGoogleUser(googleId, displayName, email) {
   return result[0]
 }
 
-
-// SQL SEARCH FOR EXISTING TWITTER USER
-export async function findUserByTwitterId(twitterId) {
-  const result = await sql`
-    SELECT id, username
-    FROM users
-    WHERE twitter_id = ${twitterId}
-  `
-  return result[0]
-}
-
-
-// SQL CREATE NEW TWITTER USER (no password)
-export async function findOrCreateTwitterUser(twitterId, username) {
-  const result = await sql`
-    INSERT INTO users (username, twitter_id)
-    VALUES (${username}, ${twitterId})
-    ON CONFLICT (twitter_id) DO UPDATE SET twitter_id = EXCLUDED.twitter_id
-    RETURNING id, username
-  `
-  return result[0]
-}
 
 
 // SQL SEARCH FOR EXISTING FACEBOOK USER
