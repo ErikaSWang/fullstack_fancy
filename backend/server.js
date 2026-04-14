@@ -343,11 +343,13 @@ app.use((err, req, res) => {
 
 
 // START SERVER
-app.listen(PORT, () => {
-  if (!process.env.VERCEL) {
+// In Vercel's serverless environment, the app is exported and Vercel handles
+// the HTTP listening itself — calling listen() is not needed and may error.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
-  }
-})
+  })
+}
 
 // EXPORT FOR VERCEL AND RENDER
 export default app
