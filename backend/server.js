@@ -181,7 +181,8 @@ app.use(cors({
   origin: process.env.ALLOWED_ORIGIN
     ? process.env.ALLOWED_ORIGIN.split(',')
     : ['http://localhost:5000'],
-  credentials: true  // required for cookies to be sent cross-origin
+  credentials: true,  // required for cookies to be sent cross-origin
+  maxAge: 86400       // cache preflight response for 24 hours — browser won't re-send OPTIONS before every request
 }))
 
 
@@ -231,12 +232,12 @@ app.use(passport.initialize())
 //  • pino-http: structured JSON logging → Sentry and production log services
 //  • morgan: human-readable terminal output (colorized in dev, Apache format in prod)
 // ─────────────────────────────────────────────────────────────────
-app.use(pinoHttp({ logger }))
+//app.use(pinoHttp({ logger }))
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))       // concise, colorized output for development
 } else {
-  app.use(morgan('combined'))  // Apache format — includes IP, user-agent, referrer (better for analytics/security audits)
+  //app.use(morgan('combined'))  // Apache format — includes IP, user-agent, referrer (better for analytics/security audits)
 }
 
 
