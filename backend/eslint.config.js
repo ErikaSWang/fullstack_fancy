@@ -83,7 +83,16 @@ export default [
         // Use a constant-time comparison function instead (like crypto.timingSafeEqual).
 
       // ── general code quality ───────────────────────────────────
-      'no-unused-vars': 'warn',       // unused variables are often leftover mistakes
+      'no-unused-vars': ['warn', {
+        // Variables/parameters prefixed with _ are intentionally unused.
+        // Convention used in Express error handlers: all 4 parameters
+        // (err, req, res, next) must be declared for Express to recognise
+        // the function as an error handler — even if next is never called.
+        // Prefixing with _ tells both ESLint and human readers: "I know
+        // this is unused, it's required by the framework, not a mistake."
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
       'no-console': 'off',            // we use console.log intentionally (pino handles prod logging)
     }
   }

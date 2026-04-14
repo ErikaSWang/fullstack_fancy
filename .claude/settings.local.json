@@ -7,7 +7,8 @@
       "Bash(npm uninstall:*)",
       "WebFetch(domain:x.com)",
       "Bash(find /c/Users/Erika/projects/express/fullstack_fancy/backend -name *.env* -o -name *secret* -o -name *key*)",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(node -e \"import\\('helmet'\\).then\\(h => console.log\\(JSON.stringify\\(Object.keys\\(h.default\\), null, 2\\)\\)\\)\")"
     ]
   }
 }

@@ -9,6 +9,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
+    open: true,
     allowedHosts: ['all', process.env.REPLIT_DEV_DOMAIN, '.replit.dev'].filter(Boolean),
     proxy: {
       '/api': {

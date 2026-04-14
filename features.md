@@ -210,3 +210,65 @@ C. Part Three
 
 
 # Health Check
+
+
+# More on Hacking Attempts & the Security Middleware We're Using
+
+1. IP Spoofing (using fake IPs)
+    What hackers are trying to do:
+      1. Bypass rate limiting (most relevant to your app)
+      Your rate limiter blocks an IP after too many login attempts. If an attacker can fake their IP address, they just rotate through fake IPs and get unlimited attempts — effectively defeating your brute force protection entirely. This is the most direct threat to your app specifically.
+
+      2. Bypass IP blocklists
+      If a security system has banned a known malicious IP, the attacker spoofs a different one to get back in.
+
+      3. Hide their identity
+      Law enforcement and server logs track IP addresses. Spoofing makes it harder to trace an attack back to the real person.
+
+      4. Amplification DDoS attacks
+      A more advanced technique — attacker sends requests with a victim's IP as the spoofed source. The server sends its (large) responses to the victim instead of the attacker, flooding the victim with traffic they never asked for.
+
+      Is IP spoofing different from someone using a VPN?
+      Great question — they sound similar but they're quite different!
+
+      VPN:
+
+      A legitimate tool — the user routes their traffic through a VPN server, so your server sees the VPN's IP instead of theirs
+      The VPN provider knows who the real user is
+      The connection is still a real, properly established TCP connection
+      Used for privacy, security on public WiFi, accessing geo-restricted content, etc.
+      Legal and common — millions of normal users do this daily
+      IP Spoofing:
+
+      Malicious technique — the attacker forges the source IP address in the network packet itself
+      Nobody is actually at that fake IP address — it's fabricated
+      Has a fundamental limitation: responses go to the fake IP, not the attacker — so it mostly only works for attacks that don't need a response (like DDoS floods)
+      For anything requiring a back-and-forth conversation (like logging into your app), true IP spoofing doesn't really work because the TCP handshake can't complete
+      The X-Forwarded-For header spoofing (what your app actually protects against) is slightly different — an attacker manually adds a fake header to their real request claiming to be from a different IP. This does work at the application layer, which is exactly why trust proxy: 1 matters
+      Practical implication for your app:
+
+      A VPN user hits your rate limiter just like anyone else — the VPN's IP gets rate limited. If a VPN has many users, they might share rate limit consequences, but that's a minor edge case.
+
+      The real threat is the X-Forwarded-For header manipulation — which you're already protected against. ✅
+
+      So an IP spoofer couldn't just use a ton of VPNs to try and accomplish whatever it is they are trying to do?
+      They absolutely could — and this is actually a real attack technique! It even has a name: credential stuffing or distributed brute force when done at scale.
+
+      The modern reality is attackers don't even need to manually switch VPNs — they rent access to botnets (networks of thousands of compromised computers, each with their own real IP) or use residential proxy networks (services that route traffic through real people's home connections, often without those people knowing).
+
+      So a sophisticated attacker could:
+
+      Get a list of username/password combinations from a data breach
+      Try them across thousands of different IPs simultaneously
+      Each IP only makes 1-2 attempts — never triggering your rate limiter
+      This is genuinely hard to fully solve at the application level. The honest answer is:
+
+      Layer	What it stops
+      Your rate limiter	Unsophisticated single-IP brute force
+      reCAPTCHA	Automated bots (they can't solve it cheaply at scale)
+      bcrypt slow hashing	Makes each attempt expensive even if they get in
+      Cloudflare / WAF	Can detect and block distributed patterns across IPs
+      Account lockout	Limits damage per account regardless of IP count
+      reCAPTCHA is actually your strongest defence here — even with 10,000 different IPs, solving a reCAPTCHA for each attempt costs real money and time. That's why Google's bot detection is valuable beyond just the checkbox.
+
+      For a learning project your current setup is solid. At production scale with real users, adding Cloudflare in front of your app would be the next meaningful step. 😊

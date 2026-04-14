@@ -13,6 +13,8 @@ import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
     // 2. Will give console warnings if something is deprecated
     // 3. WARNS ABOUT POTENTIAL SIDE EFFECTS
           // (LIKE THE RACE CONDITION WE ENCOUNTERED WITH THE TOKEN CHECK (see useCheckAuth.js))
+          
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
       <Provider store={store}>
@@ -20,4 +22,5 @@ import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
       </Provider>
     </GoogleReCaptchaProvider>
   </React.StrictMode>
+)
 

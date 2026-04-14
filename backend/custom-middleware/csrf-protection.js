@@ -62,6 +62,17 @@ export function csrfProtection(req, res, next) {
   // 'same-site'   = request came from a subdomain of our site → ALLOW
   // 'none'        = direct navigation (curl, Postman, etc.) → ALLOW
   //                 (not a browser CSRF attack — no cookies in that context)
+  //
+  // Attack example — what the browser sends when evil.com auto-submits a form:
+  //   POST /api/users/delete-account HTTP/1.1
+  //   Host: yoursite.com
+  //   Cookie: token1=eyJhbGc...   ← browser auto-attached the auth cookie
+  //   Sec-Fetch-Site: cross-site  ← browser honestly reports it came from evil.com
+  //   Sec-Fetch-Mode: no-cors
+  //   Content-Type: application/x-www-form-urlencoded
+  //
+  // The browser can't lie about Sec-Fetch-Site — it's set by the browser itself,
+  // not by any script on the page. We read it and block anything marked 'cross-site'.
   const fetchSite = req.headers['sec-fetch-site']
   if (fetchSite === 'cross-site') {
     return res.status(403).json({ message: 'Forbidden: cross-site request blocked' })
@@ -72,6 +83,17 @@ export function csrfProtection(req, res, next) {
   // Browsers include this on cross-origin requests and same-origin POST requests.
   // If it's present and doesn't match our frontend, something suspicious is happening.
   // If it's absent (e.g. curl, mobile app), we skip this check — it's not a browser CSRF attack.
+  //
+  // Attack example — an older browser that doesn't send Sec-Fetch-Site but does send Origin:
+  //   POST /api/users/transfer HTTP/1.1
+  //   Host: yoursite.com
+  //   Cookie: token1=eyJhbGc...
+  //   Origin: https://evil.com   ← reveals it came from evil.com
+  //   Content-Type: application/x-www-form-urlencoded
+  //
+  // We check: is this Origin in our allowedOrigins list? It's not — so we block it.
+  // If Origin is absent entirely (curl, mobile apps, server-to-server), we skip this
+  // check — those aren't browser CSRF attacks and don't have cookies to abuse.
   const origin = req.headers['origin']
   if (origin && !allowedOrigins.includes(origin)) {
     return res.status(403).json({ message: 'Forbidden: origin not allowed' })
@@ -83,6 +105,29 @@ export function csrfProtection(req, res, next) {
   // Browsers require a CORS preflight before allowing any custom header on a cross-origin request.
   // Our CORS config only allows our frontend origin — so an attacker's page can't pass preflight
   // and therefore can't set this header. If it's missing, the request didn't come from our app.
+  //
+  // Attack example — why an attacker CAN'T forge this header from evil.com:
+  //   Step 1: evil.com's script tries to send a fetch() with our custom header:
+  //     fetch('https://yoursite.com/api/users/delete-account', {
+  //       method: 'POST',
+  //       headers: { 'X-Requested-With': 'XMLHttpRequest' },  // trying to fake it
+  //       credentials: 'include'
+  //     })
+  //
+  //   Step 2: Browser sees a custom header on a cross-origin request — triggers a preflight:
+  //     OPTIONS /api/users/delete-account HTTP/1.1
+  //     Host: yoursite.com
+  //     Origin: https://evil.com
+  //     Access-Control-Request-Headers: x-requested-with
+  //
+  //   Step 3: Our CORS config sees Origin: evil.com is not in our allowedOrigins.
+  //     It does NOT include evil.com in Access-Control-Allow-Origin.
+  //     The preflight fails. The actual POST never sends. The custom header never arrives.
+  //
+  //   Step 4: Our legitimate frontend at localhost:5000 CAN pass preflight because
+  //     it IS in allowedOrigins. So our app works; the attacker's doesn't.
+  //
+  // If X-Requested-With is absent entirely, the request didn't come from our React app.
   if (!req.headers['x-requested-with']) {
     return res.status(403).json({ message: 'Forbidden: missing required request header' })
   }

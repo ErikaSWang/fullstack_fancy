@@ -227,7 +227,7 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                 <Button
                   variant="primary"
                   type="button"
-                  onClick={() => { submitAction.current = 'signup'; handleSubmit() }}
+                  onClick={() => { submitButton.current = 'signup'; handleSubmit() }}
                 >
                   Sign Up
                 </Button>
@@ -235,7 +235,7 @@ const Login = ({formMessage, setFormMessage, user, setUser}) => {
                   variant="success"
                   type="button"
                   className="ms-2"
-                  onClick={() => { submitAction.current = 'login'; handleSubmit() }}
+                  onClick={() => { submitButton.current = 'login'; handleSubmit() }}
                 >
                   Log In
                 </Button>

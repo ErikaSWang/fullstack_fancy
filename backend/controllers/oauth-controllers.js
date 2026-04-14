@@ -20,7 +20,7 @@ export function verifyGoogle(req, res, next) {
 
 // This redirects the user back to the front page, after successful signin using Google Sign-in
 //
-export function redirectGoogle(req, res, next) {
+export function redirectGoogle(req, res, _next) {
   res.redirect(process.env.GOOGLE_SUCCESS_REDIRECT || '/')
 }
 
