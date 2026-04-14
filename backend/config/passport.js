@@ -3,11 +3,15 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { Strategy as FacebookStrategy } from 'passport-facebook'
 import { findUserByGoogleId, findOrCreateGoogleUser, findUserByFacebookId, findOrCreateFacebookUser } from '../models/users-models.js'
 
+const googleCallbackURL = process.env.NODE_ENV === 'production'
+  ? 'https://fullstack-fancy.vercel.app/api/oauth/google/callback'
+  : 'http://localhost:3000/api/oauth/google/callback'
+
 passport.use(new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    callbackURL: googleCallbackURL,
     state: false,   // stateless backend — no session to store the CSRF state parameter
   },
   async (accessToken, refreshToken, profile, done) => {

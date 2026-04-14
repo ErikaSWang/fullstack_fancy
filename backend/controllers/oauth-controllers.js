@@ -1,5 +1,9 @@
 import passport from '../config/passport.js'
 
+const googleSuccessRedirect = process.env.NODE_ENV === 'production'
+  ? 'https://fullstack-fancy.vercel.app'
+  : 'http://localhost:5000'
+
 
 
 // A. GOOGLE
@@ -13,14 +17,14 @@ export function callGoogle(req, res, next) {
 // This verifies the user Google Sign-in
 //
 export function verifyGoogle(req, res, next) {
-  passport.authenticate('google', { failureRedirect: process.env.GOOGLE_SUCCESS_REDIRECT || '/', session: false })(req, res, next)
+  passport.authenticate('google', { failureRedirect: googleSuccessRedirect || '/', session: false })(req, res, next)
 }
 
 
 // This redirects the user back to the front page, after successful signin using Google Sign-in
 //
 export function redirectGoogle(req, res, _next) {
-  res.redirect(process.env.GOOGLE_SUCCESS_REDIRECT || '/')
+  res.redirect(googleSuccessRedirect || '/')
 }
 
 
