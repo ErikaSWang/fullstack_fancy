@@ -1,16 +1,31 @@
 # Full Stack App
 
-A minimual full-stack application that strives to be state-of-the-art secure
+My attempt to create a secure, production-ready full-stack app
+
 Frontend: Vite React Javascript
 Backend: Express
 
-Additional external sources used:
-- Supabase DB
-- Upstash Redis Cache
-- Vercel deployment
-- Sentry error logging
+Several external resources were needed to make it functional/secure:
+   *
+      database: Supabase
+      cache for login: Upstash Redis
+      deployment: Vercel
+      error logging: Sentry
+   ** 
+      security: google reCaptcha
+      social media login (oAuth 2.0) - google, facebook
 
-* Accounts & keys needed for forking
+* Accounts and keys needed for forking
+** URLs needed for forking, or fresh deployments (elsewhere)
+
+*
+** Files affected:
+      .env
+      /frontend/.env
+      server.js
+      oauth-authentication.js
+      oauth-controllers.js
+
 
 
 ## Basic Project Structure
@@ -105,7 +120,7 @@ Entry point is server.js
 
 ### Add a new React component (frontend)
 
-Entry point is index.html -> src/main.jsx -> src/App.jsx -> src/components/Root.jsx -> then ../(various pages)
+Entry point is index.html -> src/main.jsx -> src/App.jsx -> src/components/Root.jsx -> then <HomePage /> (or other pages)
 
 
 ## Notes

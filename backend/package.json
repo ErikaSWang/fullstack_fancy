@@ -27,6 +27,7 @@
     "http-errors": "^2.0.1",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
+    "online": "^0.0.1",
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
