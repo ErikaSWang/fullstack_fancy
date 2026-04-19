@@ -1,5 +1,6 @@
 import express from 'express'
-import { callGoogle, verifyGoogle, callFacebook, verifyFacebook } from '../custom-middleware/oauth-authentication.js'
+import { callGoogle, callFacebook } from '../custom-middleware/oauth-contact.js'
+import { verifyGoogle, verifyFacebook } from '../custom-middleware/oauth-success.js'
 import { redirectGoogle, redirectFacebook } from '../controllers/oauth-controllers.js'
 
 import { freshJWT } from '../helper-functions/createJWT.js'

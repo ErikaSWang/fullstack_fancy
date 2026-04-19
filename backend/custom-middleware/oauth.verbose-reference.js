@@ -31,6 +31,7 @@ import { findUserByGoogleId, findOrCreateGoogleUser, findUserByFacebookId, findO
   // * >     verifyGoogle() TRIGGERED!!
       // Backend → Google:   POST WITH AUTH TOKEN, CLIENT SECRET IN BODY                    (SERVER REQUEST)
       // Google → Backend:   user profile                                                   (SERVER RESPONSE)
+          // WE CONTACT THE DATABASE HERE
           // WE GENERATE THE ACCESS TOKENS HERE
       // Backend -> Frontend: approval granted, page changes from login to logged in!
 
