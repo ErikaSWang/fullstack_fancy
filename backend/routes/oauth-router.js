@@ -1,6 +1,6 @@
 import express from 'express'
-import { callGoogle, callFacebook } from '../custom-middleware/oauth-authentication.js'
-import { verifyGoogle, redirectGoogle, verifyFacebook, redirectFacebook } from '../controllers/oauth-controllers.js'
+import { callGoogle, verifyGoogle, callFacebook, verifyFacebook } from '../custom-middleware/oauth-authentication.js'
+import { redirectGoogle, redirectFacebook } from '../controllers/oauth-controllers.js'
 
 import { freshJWT } from '../helper-functions/createJWT.js'
 import { freshUUID } from '../helper-functions/createUUID.js'
