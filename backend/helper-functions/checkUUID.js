@@ -15,7 +15,7 @@ import redis from '../providers/redis-cache.js'
 export async function checkUUID(req, res, next) {
    res.set('Cache-Control', 'no-store')
 
-  // Step 1. Check if the user has been logged in, the past 30 days (and still has their longterm cookie)
+  // Step 1. Check if the user has been logged in, the past 7 days (and still has their longterm cookie)
   //    - use cookie to extract the UUID
   const tokenUUID = req.cookies.token2
 

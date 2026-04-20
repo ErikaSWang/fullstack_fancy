@@ -15,8 +15,8 @@ import cookieParser from 'cookie-parser'      // parses cookies from incoming re
 import { csrfProtection } from './custom-middleware/csrf-protection.js'  // custom CSRF protection middleware (enforces sameSite, Sec-Fetch-Site, Origin, and custom header checks)
 import passport from './config/passport.js';  // manages OAuth strategies (Google, Facebook, Twitter login)
 // LOGGING:
-//import logger from './config/logger.js'       // structured logging with Pino (sends logs to Sentry and production log services)
-//import pinoHttp from 'pino-http'              // Express middleware for Pino logging (logs each HTTP request in JSON format for Sentry/production logs)
+import pino from 'pino'                       // structured logging with Pino (sends logs to Sentry and production log services)
+import pinoHttp from 'pino-http'              // Express middleware for Pino logging (logs each HTTP request in JSON format for Sentry/production logs)
 import morgan from 'morgan'                   // HTTP request logger (colorized for development, Apache format for production) 
 // UTILITIES:
 import compression from 'compression';        // gzips response bodies to reduce bandwidth (not a security layer, but improves performance)
@@ -232,7 +232,26 @@ app.use(passport.initialize())
 //  • pino-http: structured JSON logging → Sentry and production log services
 //  • morgan: human-readable terminal output (colorized in dev, Apache format in prod)
 // ─────────────────────────────────────────────────────────────────
-//app.use(pinoHttp({ logger }))
+
+const logger = pino(
+  process.env.NODE_ENV === 'development'
+    ? {
+        level: 'debug',
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+          },
+        },
+      }
+    : {
+        level: 'info',
+      }
+)
+
+app.use(pinoHttp({ logger }))
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))       // concise, colorized output for development

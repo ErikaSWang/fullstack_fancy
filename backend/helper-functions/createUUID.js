@@ -2,24 +2,24 @@ import { randomUUID } from 'crypto'
 import redis from '../providers/redis-cache.js'
 
 
-// CREATE A 30-DAY 'ROLLING' TOKEN (to avoid multiple calls to the database for user info)
+// CREATE A 7-DAY 'ROLLING' TOKEN (to avoid multiple calls to the database for user info)
 //    (JWTs are self-contained, but can't be deleted)
 //    (These stay in the back, but kept getting deleted and reissued)
 
 
 // This token gives them access to a hotel pool, but you need a fresh pass (short expiry) every time
-//    1. The 36-character ID is like their hotel key (YOU HOLD ONTO IT)
+//    1. The 36-character ID is like their hotel key (YOU HOLD ONTO IT, expires in 7 days)
 
 // EXCEPT HERE,
-// 30 DAY EXPIRY IS CONSTANTLY GETTING REFRESHED, EVERY TIME THE USER TAKES ACTION
+// 7 DAY EXPIRY IS CONSTANTLY GETTING REFRESHED, EVERY TIME THE USER TAKES ACTION
 //  - visiting site
 //  - logging in
 //  - adding a comment
 //  - getting comments
 
 
-const THIRTY_DAYS_SECONDS = 30 * 24 * 60 * 60        // for Redis TTL
-const THIRTY_DAYS_MS      = THIRTY_DAYS_SECONDS * 1000 // for cookie maxAge
+const SEVEN_DAYS_SECONDS = 7 * 24 * 60 * 60        // for Redis TTL
+const SEVEN_DAYS_MS      = SEVEN_DAYS_SECONDS * 1000 // for cookie maxAge
 
 
 export async function freshUUID(req, res, next) {
@@ -33,7 +33,7 @@ export async function freshUUID(req, res, next) {
   await redis.set(
     `userID:${tokenUUID}`,
     JSON.stringify({ id, username }),
-    { ex: THIRTY_DAYS_SECONDS }
+    { ex: SEVEN_DAYS_SECONDS }
   )
 
   // SET AS A SEPARATE HTTPONLY COOKIE
@@ -46,7 +46,7 @@ export async function freshUUID(req, res, next) {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
-    maxAge: THIRTY_DAYS_MS,
+    maxAge: SEVEN_DAYS_MS,
     path: '/api'
   })
 
