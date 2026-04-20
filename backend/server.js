@@ -194,6 +194,22 @@ app.use(cors({
 app.use(express.json())
 
 
+// PROTOTYPE POLLUTION PROTECTION
+// ─────────────────────────────────────────────────────────────────
+// Rejects any request body containing __proto__, constructor, or prototype keys.
+// These are used in prototype pollution attacks to inject properties onto
+// Object.prototype, potentially affecting every object in the application.
+// ─────────────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+  const forbidden = ['__proto__', 'constructor', 'prototype']
+  const bodyStr = JSON.stringify(req.body)
+  if (forbidden.some(key => bodyStr.includes(`"${key}"`))) {
+    return res.status(400).json({ message: 'Invalid request' })
+  }
+  next()
+})
+
+
 // COOKIE PARSER
 // ─────────────────────────────────────────────────────────────────
 // Reads incoming cookies into req.cookies — same idea as express.json() but for cookies.
